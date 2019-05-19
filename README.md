@@ -1,1 +1,3 @@
 # ProjectGFK
+
+Kocham Was ludzie!
