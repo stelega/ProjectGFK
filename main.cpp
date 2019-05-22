@@ -6,7 +6,8 @@
 //  Copyright © 2019 Michał Wojtasik. All rights reserved.
 //
 
-#include"MyFrame.h"
+#include"MainFrame.hpp"
+#include"MenuFrame.hpp"
 // #include"MyFrameFunctionality.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
@@ -24,7 +25,9 @@ wxIMPLEMENT_APP(App);
 
 
 bool App::OnInit(){
-    MyFrame *frame = new MyFrame(NULL, wxID_ANY, "Szymon Telega lab03");
+    MainFrame *frame = new MainFrame(NULL, wxID_ANY, "Okno główne");
+    MenuFrame *frame1 = new MenuFrame(NULL, wxID_ANY, "Menu");
     frame->Show(true);
+    frame1->Show(true);
     return true;
 }
