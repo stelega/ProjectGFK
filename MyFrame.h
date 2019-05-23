@@ -40,12 +40,15 @@
 class MyFrame : public wxFrame
 {
 	private:
+        // Kolor tła
         wxColour m_background_color;
+        // Wielkosc miniaturek
         static constexpr int miniaturka_size_x{150};
         static constexpr int miniaturka_size_y{120};
     
-        // Menu górne
-        wxStaticText *m_text_gornego_menu;
+    
+        // Panel ze zdjeciem glownym
+        wxScrolledWindow* main_panel;
     
         // Miniaturki
         wxImage *m_no_photo_selected;
@@ -57,7 +60,7 @@ class MyFrame : public wxFrame
         wxImage *m_miniaturka_5;
     
         // Menu boczne
-		wxPanel* main_panel;
+        wxPanel * m_miniaturki;
 		wxButton* m_wczytaj_1;
 		wxButton* m_wybierz_1;
 		wxButton* m_wczytaj_2;
@@ -68,6 +71,7 @@ class MyFrame : public wxFrame
 		wxButton* m_wybierz_4;
 		wxButton* m_wczytaj_5;
 		wxButton* m_wybierz_5;
+        // Zmienna ktora mowi ktora miniaturka jest wybrana aktualnie, jeszcze nie wiem czy sie przyda w ogole xd
         int m_which_min;
         wxRadioButton *m_Radio_1;
         wxRadioButton *m_Radio_2;
@@ -75,12 +79,15 @@ class MyFrame : public wxFrame
         wxRadioButton *m_Radio_4;
         wxRadioButton *m_Radio_5;
     
+        // OBSŁUGA ZDARZEN
         void Radio_Button_clic(wxCommandEvent& event);
     
         // RYSOWANIE
         void Repaint();
-        void Repaint_minature( wxImage* miniaturka, wxBufferedDC *dc, wxSize main_panel_size, int which_min);
+        void Repaint_miniatures();
+        void Repaint_minature( wxImage* miniaturka, wxClientDC *dc, wxSize main_panel_size, int which_min);
         void WxPanel_Repaint( wxPaintEvent& event );
+        void WxPanelMiniaturek_Repaint( wxPaintEvent& event );
     
          void m_wczytaj_1_click( wxCommandEvent& event );
          void m_wybierz_1_click( wxCommandEvent& event );
@@ -95,10 +102,9 @@ class MyFrame : public wxFrame
     
          void wczytaj( int which_button );
          void wybierz( int which_button );
-
 	public:
 
-		MyFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1120, 750 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		MyFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1120, 628 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
 		~MyFrame();
 
