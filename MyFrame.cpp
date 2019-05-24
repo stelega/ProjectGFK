@@ -15,11 +15,8 @@ MyFrame::MyFrame( wxWindow* parent, wxWindowID id, const wxString& title, const 
 	this->SetSizeHints( wxSize(1120 , 629), wxDefaultSize );
     
     // Tworzenie miejsca na oryginaly wszystkich zdjec
-    m_miniaturka_1 = new wxImage;
-    m_miniaturka_2 = new wxImage;
-    m_miniaturka_3 = new wxImage;
-    m_miniaturka_4 = new wxImage;
-    m_miniaturka_5 = new wxImage;
+    for(int i = 0 ; i < 5 ; i++)
+        m_miniaturka.push_back(new wxImage);
     m_main = new wxImage;
     m_main_copy = new wxImage;
     m_no_photo_selected = new wxImage;
@@ -33,32 +30,11 @@ MyFrame::MyFrame( wxWindow* parent, wxWindowID id, const wxString& title, const 
     m_no_photo_selected->LoadFile("/Users/michalwojtasik/Desktop/default.png");
     if(m_no_photo_selected->IsOk())
     {
-        *m_miniaturka_1 = m_no_photo_selected->Copy();
-        *m_miniaturka_2 = m_no_photo_selected->Copy();
-        *m_miniaturka_3 = m_no_photo_selected->Copy();
-        *m_miniaturka_4 = m_no_photo_selected->Copy();
-        *m_miniaturka_5 = m_no_photo_selected->Copy();
+        for(auto miniaturka : m_miniaturka)
+            *miniaturka = m_no_photo_selected->Copy();
         *m_main = m_no_photo_selected->Copy();
         *m_main_copy = m_no_photo_selected->Copy();
     }
-    wxImage temp(*m_no_photo_selected);
-//    wxSize temp_size = temp.GetSize();
-    temp.Rescale(skalowanie_do_miniaturki(temp.GetSize().x, temp.GetSize().y).x, skalowanie_do_miniaturki(temp.GetSize().x, temp.GetSize().y).y);
-    m_miniaturka_bitmap_1 = new wxStaticBitmap(this, 0, wxBitmap(temp), wxDefaultPosition, wxDefaultSize);
-    m_miniaturka_bitmap_2 = new wxStaticBitmap(this, 0, wxBitmap(temp), wxDefaultPosition, wxDefaultSize);
-    m_miniaturka_bitmap_3 = new wxStaticBitmap(this, 0, wxBitmap(temp), wxDefaultPosition, wxDefaultSize);
-    m_miniaturka_bitmap_4 = new wxStaticBitmap(this, 0, wxBitmap(temp), wxDefaultPosition, wxDefaultSize);
-    m_miniaturka_bitmap_5 = new wxStaticBitmap(this, 0, wxBitmap(temp), wxDefaultPosition, wxDefaultSize);
-    m_miniaturka_bitmap_1->SetMinSize(wxSize(miniaturka_size_x, miniaturka_size_y));
-    m_miniaturka_bitmap_2->SetMinSize(wxSize(miniaturka_size_x, miniaturka_size_y));
-    m_miniaturka_bitmap_3->SetMinSize(wxSize(miniaturka_size_x, miniaturka_size_y));
-    m_miniaturka_bitmap_4->SetMinSize(wxSize(miniaturka_size_x, miniaturka_size_y));
-    m_miniaturka_bitmap_5->SetMinSize(wxSize(miniaturka_size_x, miniaturka_size_y));
-//    m_miniaturka_bitmap_5->SetPosition(wysrodkowanie_miniaturki(temp_size.x, temp_size.y));
-//    m_miniaturka_bitmap_5->SetPosition(wysrodkowanie_miniaturki(temp_size.x, temp_size.y));
-//    m_miniaturka_bitmap_5->SetPosition(wysrodkowanie_miniaturki(temp_size.x, temp_size.y));
-//    m_miniaturka_bitmap_5->SetPosition(wysrodkowanie_miniaturki(temp_size.x, temp_size.y));
-//    m_miniaturka_bitmap_5->SetPosition(wysrodkowanie_miniaturki(temp_size.x, temp_size.y));
 
     // W cholerę sizersów i to wszystko inne
 	wxBoxSizer* main_sizer;
@@ -80,34 +56,29 @@ MyFrame::MyFrame( wxWindow* parent, wxWindowID id, const wxString& title, const 
     
     wxBoxSizer* right_sizer_with_minatures;
     right_sizer_with_minatures = new wxBoxSizer( wxVERTICAL );
-    right_sizer_with_minatures->Add( m_miniaturka_bitmap_1, 0, wxALL|wxEXPAND, 1);
-    right_sizer_with_minatures->Add( m_miniaturka_bitmap_2, 0, wxALL|wxEXPAND, 1);
-    right_sizer_with_minatures->Add( m_miniaturka_bitmap_3, 0, wxALL|wxEXPAND, 1);
-    right_sizer_with_minatures->Add( m_miniaturka_bitmap_4, 0, wxALL|wxEXPAND, 1);
-    right_sizer_with_minatures->Add( m_miniaturka_bitmap_5, 0, wxALL|wxEXPAND, 1);
     
     wxStaticBoxSizer* right_sizer_with_big_menu;
     right_sizer_with_big_menu = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Dostosuj powiększenie")), wxVERTICAL );
     right_sizer_with_big_menu->SetMinSize(100, 629);
     
-    m_Radio_powiekszenie_1 = new wxRadioButton(this, wxID_ANY, _("100%"), wxDefaultPosition, wxDefaultSize, 0 );
-    right_sizer_with_big_menu->Add( m_Radio_powiekszenie_1, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 4);
+    m_Radio_powiekszenie.push_back(new wxRadioButton(this, wxID_ANY, _("100%"), wxDefaultPosition, wxDefaultSize, 0 ));
+    right_sizer_with_big_menu->Add( m_Radio_powiekszenie[0], 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 4);
     
-    m_Radio_powiekszenie_2 = new wxRadioButton(this, wxID_ANY, _("Dopasuj szerokość"), wxDefaultPosition, wxDefaultSize, 0 );
-    right_sizer_with_big_menu->Add( m_Radio_powiekszenie_2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 4);
+    m_Radio_powiekszenie.push_back(new wxRadioButton(this, wxID_ANY, _("Dopasuj szerokość"), wxDefaultPosition, wxDefaultSize, 0 ));
+    right_sizer_with_big_menu->Add( m_Radio_powiekszenie[1], 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 4);
     
-    m_Radio_powiekszenie_3 = new wxRadioButton(this, wxID_ANY, _("Dopasuj wysokość"), wxDefaultPosition, wxDefaultSize, 0 );
-    right_sizer_with_big_menu->Add( m_Radio_powiekszenie_3, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 4);
+    m_Radio_powiekszenie.push_back(new wxRadioButton(this, wxID_ANY, _("Dopasuj wysokość"), wxDefaultPosition, wxDefaultSize, 0 ));
+    right_sizer_with_big_menu->Add( m_Radio_powiekszenie[2], 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 4);
     
-    m_Radio_powiekszenie_4 = new wxRadioButton(this, wxID_ANY, _("Zmieść na ekranie"), wxDefaultPosition, wxDefaultSize, 0 );
-    right_sizer_with_big_menu->Add( m_Radio_powiekszenie_4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 4);
+    m_Radio_powiekszenie.push_back(new wxRadioButton(this, wxID_ANY, _("Zmieść na ekranie"), wxDefaultPosition, wxDefaultSize, 0 ));
+    right_sizer_with_big_menu->Add( m_Radio_powiekszenie[3], 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 4);
     
-    m_Radio_powiekszenie_1->SetValue(true);
+    m_Radio_powiekszenie[3]->SetValue(true);
     
     
-//    m_miniaturki = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-//    m_miniaturki->SetMinSize(wxSize(152, 607));
-//    right_sizer_with_minatures->Add(m_miniaturki, 0, wxEXPAND);
+    m_miniaturki = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+    m_miniaturki->SetMinSize(wxSize(152, 607));
+    right_sizer_with_minatures->Add(m_miniaturki, 0, wxEXPAND);
 
 	wxBoxSizer* sizer_1;
 	sizer_1 = new wxBoxSizer( wxHORIZONTAL );
@@ -228,19 +199,20 @@ MyFrame::MyFrame( wxWindow* parent, wxWindowID id, const wxString& title, const 
 	this->Layout();
 	this->Centre( wxBOTH );
     this->SetBackgroundColour(m_background_color);
+    
     main_panel->SetBackgroundColour(m_background_color);
     
-    // obsługa zdarzeń
+    // obsługa zdarzeń    
     m_Radio_1->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
     m_Radio_2->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
     m_Radio_3->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
     m_Radio_4->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
     m_Radio_5->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
     
-    m_Radio_powiekszenie_1->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_1_clic ), NULL, this );
-    m_Radio_powiekszenie_2->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_2_clic ), NULL, this );
-    m_Radio_powiekszenie_3->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_3_clic ), NULL, this );
-    m_Radio_powiekszenie_4->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_4_clic ), NULL, this );
+    m_Radio_powiekszenie[0]->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_1_clic ), NULL, this );
+    m_Radio_powiekszenie[1]->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_2_clic ), NULL, this );
+    m_Radio_powiekszenie[2]->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_3_clic ), NULL, this );
+    m_Radio_powiekszenie[3]->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_4_clic ), NULL, this );
     
     m_wczytaj_1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame::m_wczytaj_1_click ), NULL, this );
     m_wybierz_1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame::m_wybierz_1_click ), NULL, this );
@@ -254,7 +226,8 @@ MyFrame::MyFrame( wxWindow* parent, wxWindowID id, const wxString& title, const 
     m_wybierz_5->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame::m_wybierz_5_click ), NULL, this );
     
     main_panel->Connect( wxEVT_PAINT, wxPaintEventHandler( MyFrame::WxPanel_Repaint ), NULL, this );
-//    m_miniaturki->Connect( wxEVT_PAINT, wxPaintEventHandler( MyFrame::WxPanelMiniaturek_Repaint ), NULL, this );
+    m_miniaturki->Connect( wxEVT_PAINT, wxPaintEventHandler( MyFrame::WxPanelMiniaturek_Repaint ), NULL, this );
+    zaktualizuj_powiekszenie();
 }
 
 MyFrame::~MyFrame()
@@ -265,10 +238,10 @@ MyFrame::~MyFrame()
     m_Radio_4->Disconnect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
     m_Radio_5->Disconnect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
     
-    m_Radio_powiekszenie_1->Disconnect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_1_clic ), NULL, this );
-    m_Radio_powiekszenie_2->Disconnect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_2_clic ), NULL, this );
-    m_Radio_powiekszenie_3->Disconnect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_3_clic ), NULL, this );
-    m_Radio_powiekszenie_4->Disconnect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_4_clic ), NULL, this );
+    m_Radio_powiekszenie[0]->Disconnect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_1_clic ), NULL, this );
+    m_Radio_powiekszenie[1]->Disconnect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_2_clic ), NULL, this );
+    m_Radio_powiekszenie[2]->Disconnect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_3_clic ), NULL, this );
+    m_Radio_powiekszenie[3]->Disconnect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_4_clic ), NULL, this );
     
     m_wczytaj_1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame::m_wczytaj_1_click ), NULL, this );
     m_wybierz_1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame::m_wybierz_1_click ), NULL, this );
@@ -282,7 +255,7 @@ MyFrame::~MyFrame()
     m_wybierz_5->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame::m_wybierz_5_click ), NULL, this );
     
     main_panel->Disconnect( wxEVT_PAINT, wxPaintEventHandler( MyFrame::WxPanel_Repaint ), NULL, this );
-//    m_miniaturki->Disconnect( wxEVT_PAINT, wxPaintEventHandler( MyFrame::WxPanelMiniaturek_Repaint ), NULL, this );
+    m_miniaturki->Disconnect( wxEVT_PAINT, wxPaintEventHandler( MyFrame::WxPanelMiniaturek_Repaint ), NULL, this );
 }
 
 void MyFrame::m_wczytaj_1_click( wxCommandEvent& event ) { wczytaj(1); }
@@ -296,52 +269,22 @@ void MyFrame::m_wybierz_4_click( wxCommandEvent& event ) {}
 void MyFrame::m_wczytaj_5_click( wxCommandEvent& event ) { wczytaj(5); }
 void MyFrame::m_wybierz_5_click( wxCommandEvent& event ) {}
 
-
-//void MyFrame::WxPanelMiniaturek_Repaint( wxPaintEvent& event )
-//{
-//    Repaint_miniatures();
-//}
-
-//void MyFrame::Repaint_miniatures()
-//{
-////    wxClientDC dc(m_miniaturki);
-////    dc.Clear();
-////    int x, y;
-////    main_panel->GetSize(&x, &y);
-////    dc.SetBrush(wxBrush(*wxWHITE));
-////    dc.DrawRectangle(0, 0, miniaturka_size_x + 2, miniaturka_size_y * 5 + 7);
-////    dc.SetBrush(wxBrush(*wxBLACK));
-////    dc.DrawLine(0, 1 * (miniaturka_size_y + 1) + 1, miniaturka_size_x , 1 * (miniaturka_size_y + 1) + 1);
-////    dc.DrawLine(0, 2 * (miniaturka_size_y + 1) + 1, miniaturka_size_x , 2 * (miniaturka_size_y + 1) + 1);
-////    dc.DrawLine(0, 3 * (miniaturka_size_y + 1) + 1, miniaturka_size_x , 3 * (miniaturka_size_y + 1) + 1);
-////    dc.DrawLine(0, 4 * (miniaturka_size_y + 1) + 1, miniaturka_size_x , 4 * (miniaturka_size_y + 1) + 1);
-////    Repaint_minature(m_miniaturka_1, &dc, wxSize(x, y), 1);
-////    Repaint_minature(m_miniaturka_2, &dc, wxSize(x, y), 2);
-////    Repaint_minature(m_miniaturka_3, &dc, wxSize(x, y), 3);
-////    Repaint_minature(m_miniaturka_4, &dc, wxSize(x, y), 4);
-////    Repaint_minature(m_miniaturka_5, &dc, wxSize(x, y), 5);
-//}
+void MyFrame::WxPanelMiniaturek_Repaint( wxPaintEvent& event )
+{
+    Repaint_miniatures();
+}
 
 void MyFrame::WxPanel_Repaint( wxPaintEvent& event )
 {
     Repaint();
 }
 
-//void MyFrame::Repaint_minature( wxImage* miniaturka, wxClientDC *dc, wxSize main_panel_size, int which_min)
-//{
-////    if ( miniaturka->IsOk() )
-////    {
-////        wxImage temp = miniaturka->Copy();
-////        temp.Rescale(miniaturka_size_x, miniaturka_size_y);
-////        dc->DrawBitmap(wxBitmap(temp), 1, which_min * (miniaturka_size_y + 1) - miniaturka_size_y + 1);
-////    }
-//}
-
 
 
 void MyFrame::Radio_Button_clic(wxCommandEvent& event)
 {
-    aktualizuj_tlo();
+    zaladuj_miniaturke();
+    zaktualizuj_powiekszenie();
     Repaint();
 }
 
@@ -349,119 +292,109 @@ void MyFrame::Radio_Button_clic(wxCommandEvent& event)
 void MyFrame::m_Radio_powiekszenie_1_clic(wxCommandEvent& event)
 {
     na_maksa();
+    Repaint();
 }
 
 void MyFrame::m_Radio_powiekszenie_2_clic(wxCommandEvent& event)
 {
     dopasuj_szerokosc();
+    Repaint();
 }
 
 void MyFrame::m_Radio_powiekszenie_3_clic(wxCommandEvent& event)
 {
     dopasuj_wysokosc();
+    Repaint();
 }
 
 void MyFrame::m_Radio_powiekszenie_4_clic(wxCommandEvent& event)
 {
     zmiesc_na_ekranie();
+    Repaint();
 }
 
 void MyFrame::dopasuj_szerokosc()
 {
-    this->Maximize();
     int x, y;
     main_panel->GetSize(&x, &y);
-    double scale = m_main->GetSize().x / x;
     *m_main_copy = m_main->Copy();
-    m_main_copy->Rescale(x, m_main->GetSize().x / scale);
+    m_main_copy->Rescale( x, (static_cast<double>(m_main_copy->GetSize().y) / static_cast<double>(m_main_copy->GetSize().x)) * static_cast<double>(x));
+    main_panel->SetScrollbars(0, 20, 0 , m_main_copy->GetSize().y / 20.0);
 }
+
 void MyFrame::dopasuj_wysokosc()
 {
+    int x, y;
+    main_panel->GetSize(&x, &y);
     *m_main_copy = m_main->Copy();
+    m_main_copy->Rescale( (static_cast<double>(m_main_copy->GetSize().x) / static_cast<double>(m_main_copy->GetSize().y)) * static_cast<double>(y) , y);
+    main_panel->SetScrollbars(20, 0, m_main_copy->GetSize().x / 20.0 ,0);
 }
+
 void MyFrame::zmiesc_na_ekranie()
 {
     *m_main_copy = m_main->Copy();
+    wxSize skalowanie = skalowanie_do_rozmiaru_z_zachowaniem_proporcji(main_panel->GetSize(), m_main_copy->GetSize());
+    m_main_copy->Rescale(skalowanie.x, skalowanie.y);
+    main_panel->SetScrollbars(20, 20, m_main_copy->GetSize().x / 20.0 , m_main_copy->GetSize().y / 20.0);
 }
+
 void MyFrame::na_maksa()
 {
     *m_main_copy = m_main->Copy();
+    main_panel->SetScrollbars(20, 20, m_main_copy->GetSize().x / 20.0 , m_main_copy->GetSize().y / 20.0);
 }
 
-wxSize MyFrame::skalowanie_do_miniaturki(int width, int height)
+wxSize MyFrame::skalowanie_do_rozmiaru_z_zachowaniem_proporcji(wxSize rozmiar, wxSize do_skalowania)
 {
-    double scale;
-    if(width > height)
-    {
-        scale = width / static_cast<double>(miniaturka_size_x);
-        return wxSize(miniaturka_size_x, height / scale);
-    } else
-    {
-        scale = height / static_cast<double>(miniaturka_size_y);
-        return wxSize(width / scale, miniaturka_size_y);
-    }
+    if( static_cast<double>(do_skalowania.x) / static_cast<double>(rozmiar.x) > static_cast<double>(do_skalowania.y) / static_cast<double>(rozmiar.y) )
+        return wxSize( rozmiar.x, (static_cast<double>(do_skalowania.y) / static_cast<double>(do_skalowania.x)) * static_cast<double>(rozmiar.x) );
+    else
+        return wxSize( (static_cast<double>(do_skalowania.x) / static_cast<double>(do_skalowania.y)) * static_cast<double>(rozmiar.y) , rozmiar.y );
 }
 
-wxPoint MyFrame::wysrodkowanie_miniaturki(int width, int height)
+wxPoint MyFrame::wysrodkowanie(wxSize size, int width, int height)
 {
-    if (width == miniaturka_size_x)
-    {
-        return wxPoint(0, (miniaturka_size_y - height) / 2.0);
-    } else
-    {
-        return wxPoint((miniaturka_size_x - width) / 2.0, 0);
-    }
+    int w = size.x, h = size.y;
+    int x{}, y{};
+    if(width < w) x = (w - width) / 2.0;
+    if(height < h) y = (h - height) / 2.0;
+    return wxPoint(x, y);
 }
 
-void MyFrame::aktualizuj_tlo()
+
+void MyFrame::zaladuj_miniaturke()
 {
-    if(m_Radio_1->GetValue() && m_miniaturka_1->IsOk())
-    {
-        *m_main = m_miniaturka_1->Copy();
-        main_panel->SetScrollbars(20, 20, m_main->GetSize().x / 20.0 , m_main->GetSize().y / 20.0);
-        m_which_min = 1;
-    }
-    if(m_Radio_2->GetValue() && m_miniaturka_2->IsOk())
-    {
-        *m_main = m_miniaturka_2->Copy();
-        main_panel->SetScrollbars(20, 20, m_main->GetSize().x / 20.0 , m_main->GetSize().y / 20.0);
-        m_which_min = 2;
-    }
-    if(m_Radio_3->GetValue() && m_miniaturka_3->IsOk())
-    {
-        *m_main = m_miniaturka_3->Copy();
-        main_panel->SetScrollbars(20, 20, m_main->GetSize().x / 20.0 , m_main->GetSize().y / 20.0);
-        m_which_min = 3;
-    }
-    if(m_Radio_4->GetValue() && m_miniaturka_4->IsOk())
-    {
-        *m_main = m_miniaturka_4->Copy();
-        main_panel->SetScrollbars(20, 20, m_main->GetSize().x / 20.0 , m_main->GetSize().y / 20.0);
-        m_which_min = 4;
-    }
-    if(m_Radio_5->GetValue() && m_miniaturka_5->IsOk())
-    {
-        *m_main = m_miniaturka_5->Copy();
-        main_panel->SetScrollbars(20, 20, m_main->GetSize().x / 20.0 , m_main->GetSize().y / 20.0);
-        m_which_min = 5;
-    }
-    
-    if(m_Radio_powiekszenie_1->GetValue()) na_maksa();
-    if(m_Radio_powiekszenie_2->GetValue()) dopasuj_szerokosc();
-    if(m_Radio_powiekszenie_3->GetValue()) dopasuj_wysokosc();
-    if(m_Radio_powiekszenie_4->GetValue()) zmiesc_na_ekranie();
+    if(m_Radio_1->GetValue() && m_miniaturka[0]->IsOk())
+        *m_main = m_miniaturka[0]->Copy();
+    if(m_Radio_2->GetValue() && m_miniaturka[1]->IsOk())
+        *m_main = m_miniaturka[1]->Copy();
+    if(m_Radio_3->GetValue() && m_miniaturka[2]->IsOk())
+        *m_main = m_miniaturka[2]->Copy();
+    if(m_Radio_4->GetValue() && m_miniaturka[3]->IsOk())
+        *m_main = m_miniaturka[3]->Copy();
+    if(m_Radio_5->GetValue() && m_miniaturka[4]->IsOk())
+        *m_main = m_miniaturka[4]->Copy();
+}
+
+void MyFrame::zaktualizuj_powiekszenie()
+{
+    if(m_Radio_powiekszenie[0]->GetValue()) na_maksa();
+    if(m_Radio_powiekszenie[1]->GetValue()) dopasuj_szerokosc();
+    if(m_Radio_powiekszenie[2]->GetValue()) dopasuj_wysokosc();
+    if(m_Radio_powiekszenie[3]->GetValue()) zmiesc_na_ekranie();
 }
 
 void MyFrame::Repaint()
 {
-    wxClientDC dc(main_panel);
+    wxClientDC dc1(main_panel);
+    wxBufferedDC dc(&dc1);
     dc.Clear();
     int x, y;
     main_panel->DoPrepareDC(dc);
     main_panel->GetSize(&x, &y);
-    
     if ( m_main_copy->IsOk() ) {
-        dc.DrawBitmap(wxBitmap(*m_main_copy), 0, 0);
+        dc.DrawBitmap(wxBitmap(*m_main_copy), wysrodkowanie(wxSize(x,y), m_main_copy->GetSize().x, m_main_copy->GetSize().y) );
     }
 }
 
@@ -472,55 +405,44 @@ void MyFrame::wczytaj( int which_button )
     if (WxOpenFileDialog.ShowModal() == wxID_OK){
         new_image.LoadFile(WxOpenFileDialog.GetPath(), wxBITMAP_TYPE_JPEG);
         if(new_image.IsOk()){
-            if(which_button == 1)
-            {
-                *m_miniaturka_1 = new_image.Copy();
-                wxSize resize = skalowanie_do_miniaturki(m_miniaturka_1->GetSize().x, m_miniaturka_1->GetSize().y);
-                wxImage temp(*m_miniaturka_1);
-                temp.Rescale(resize.x, resize.y);
-                //                m_miniaturka_bitmap_1->SetPosition(wysrodkowanie_miniaturki(resize.x, resize.y));
-                m_miniaturka_bitmap_1->SetBitmap(wxBitmap(temp));
-            }
-            if(which_button == 2)
-            {
-                *m_miniaturka_2 = new_image.Copy();
-                wxSize resize = skalowanie_do_miniaturki(m_miniaturka_2->GetSize().x, m_miniaturka_2->GetSize().y);
-                wxImage temp(*m_miniaturka_2);
-                temp.Rescale(resize.x, resize.y);
-                //                m_miniaturka_bitmap_2->SetPosition(wysrodkowanie_miniaturki(resize.x, resize.y));
-                m_miniaturka_bitmap_2->SetBitmap(wxBitmap(temp));
-            }
-            if(which_button == 3)
-            {
-                *m_miniaturka_3 = new_image.Copy();
-                wxSize resize = skalowanie_do_miniaturki(m_miniaturka_3->GetSize().x, m_miniaturka_3->GetSize().y);
-                wxImage temp(*m_miniaturka_3);
-                temp.Rescale(resize.x, resize.y);
-                //                m_miniaturka_bitmap_3->SetPosition(wysrodkowanie_miniaturki(resize.x, resize.y));
-                m_miniaturka_bitmap_3->SetBitmap(wxBitmap(temp));
-            }
-            if(which_button == 4)
-            {
-                *m_miniaturka_4 = new_image.Copy();
-                wxSize resize = skalowanie_do_miniaturki(m_miniaturka_4->GetSize().x, m_miniaturka_4->GetSize().y);
-                wxImage temp(*m_miniaturka_4);
-                temp.Rescale(resize.x, resize.y);
-                //                m_miniaturka_bitmap_4->SetPosition(wysrodkowanie_miniaturki(resize.x, resize.y));
-                m_miniaturka_bitmap_4->SetBitmap(wxBitmap(temp));
-            }
-            if(which_button == 5)
-            {
-                *m_miniaturka_5 = new_image.Copy();
-                wxSize resize = skalowanie_do_miniaturki(m_miniaturka_5->GetSize().x, m_miniaturka_5->GetSize().y);
-                wxImage temp(*m_miniaturka_5);
-                temp.Rescale(resize.x, resize.y);
-                //                m_miniaturka_bitmap_5->SetPosition(wysrodkowanie_miniaturki(resize.x, resize.y));
-                m_miniaturka_bitmap_5->SetBitmap(wxBitmap(temp));
-            }
+            *(m_miniaturka[which_button - 1]) = new_image.Copy();
         }
     }
-    aktualizuj_tlo();
-    //Repaint_miniatures();
+    if(m_Radio_powiekszenie[which_button - 1]->GetValue())
+    {
+        zaladuj_miniaturke();
+        zaktualizuj_powiekszenie();
+    }
+    Repaint_miniatures();
     Repaint();
+}
+
+void MyFrame::Repaint_miniatures()
+{
+    wxClientDC dc(m_miniaturki);
+    dc.Clear();
+    int x, y;
+    main_panel->GetSize(&x, &y);
+    dc.SetBrush(wxBrush(*wxWHITE));
+    dc.DrawRectangle(0, 0, miniaturka_size_x + 2, miniaturka_size_y * 5 + 7);
+    dc.SetBrush(wxBrush(*wxBLACK));
+    dc.DrawLine(0, 1 * (miniaturka_size_y + 1) + 1, miniaturka_size_x , 1 * (miniaturka_size_y + 1) + 1);
+    dc.DrawLine(0, 2 * (miniaturka_size_y + 1) + 1, miniaturka_size_x , 2 * (miniaturka_size_y + 1) + 1);
+    dc.DrawLine(0, 3 * (miniaturka_size_y + 1) + 1, miniaturka_size_x , 3 * (miniaturka_size_y + 1) + 1);
+    dc.DrawLine(0, 4 * (miniaturka_size_y + 1) + 1, miniaturka_size_x , 4 * (miniaturka_size_y + 1) + 1);
+    for(int i = 0 ; i < 5 ; i++)
+        Repaint_minature(m_miniaturka[i], &dc, wxSize(x, y), i + 1);
+}
+
+void MyFrame::Repaint_minature( wxImage* miniaturka, wxClientDC *dc, wxSize main_panel_size, int which_min)
+{
+    if ( miniaturka->IsOk() )
+    {
+        wxImage temp = miniaturka->Copy();
+        wxSize resize = skalowanie_do_rozmiaru_z_zachowaniem_proporcji(wxSize(miniaturka_size_x, miniaturka_size_y), miniaturka->GetSize());
+        temp.Rescale(resize.x, resize.y);
+        wxPoint wysr = wysrodkowanie(wxSize(miniaturka_size_x, miniaturka_size_y), resize.x, resize.y);
+        dc->DrawBitmap(wxBitmap(temp), 1 + wysr.x, which_min * (miniaturka_size_y + 1) - miniaturka_size_y + 1 + wysr.y);
+    }
 }
 

@@ -8,6 +8,7 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 
 #include <wx/wx.h>
 #include <wx/artprov.h>
@@ -52,19 +53,10 @@ class MyFrame : public wxFrame
         wxScrolledWindow* main_panel;
     
         // Miniaturki
-        wxStaticBitmap *m_miniaturka_bitmap_1;
-        wxStaticBitmap *m_miniaturka_bitmap_2;
-        wxStaticBitmap *m_miniaturka_bitmap_3;
-        wxStaticBitmap *m_miniaturka_bitmap_4;
-        wxStaticBitmap *m_miniaturka_bitmap_5;
         wxImage *m_no_photo_selected;
         wxImage *m_main;
         wxImage *m_main_copy;
-        wxImage *m_miniaturka_1;
-        wxImage *m_miniaturka_2;
-        wxImage *m_miniaturka_3;
-        wxImage *m_miniaturka_4;
-        wxImage *m_miniaturka_5;
+        std::vector<wxImage *> m_miniaturka;
     
         // Menu boczne
         wxPanel * m_miniaturki;
@@ -86,26 +78,46 @@ class MyFrame : public wxFrame
         wxRadioButton *m_Radio_4;
         wxRadioButton *m_Radio_5;
         // Wybór powiększenia
-        wxRadioButton *m_Radio_powiekszenie_1;
-        wxRadioButton *m_Radio_powiekszenie_2;
-        wxRadioButton *m_Radio_powiekszenie_3;
-        wxRadioButton *m_Radio_powiekszenie_4;
+        std::vector<wxRadioButton *> m_Radio_powiekszenie;
     
     
         // OBSŁUGA ZDARZEN
+        /** Wybranie konkretnej miniaturki na tło
+         *  powinno załadować miniaturkę do głównego wxImgage - m_main
+         *  sprawdzic jakie powiekszenie jest wybrane - tj. zaktualizowac tlo
+         *  ustawic scrollBars
+         *  na końcu wykonac rysowanie od poczatku
+         **/
         void Radio_Button_clic(wxCommandEvent& event);
+    
+        /** Metody te powinny skopiowac oryginalne zdjecie do kopii
+         *  kopie przeskalowac zgodnie z wybranym powiekszeniem
+         *  ustawic scrollBars
+         *  na końcu wykonac rysowanie od poczatku
+         **/
         void m_Radio_powiekszenie_1_clic(wxCommandEvent& event);
         void m_Radio_powiekszenie_2_clic(wxCommandEvent& event);
         void m_Radio_powiekszenie_3_clic(wxCommandEvent& event);
         void m_Radio_powiekszenie_4_clic(wxCommandEvent& event);
     
-        // RYSOWANIE
-        void Repaint();
-//        void Repaint_miniatures();
-//        void Repaint_minature( wxImage* miniaturka, wxClientDC *dc, wxSize main_panel_size, int which_min);
+        /**
+         * Wykonuje rysowanie panelu z m_main_copy
+         * wczesniej wysrodkowuje bitmape
+         **/
         void WxPanel_Repaint( wxPaintEvent& event );
-//        void WxPanelMiniaturek_Repaint( wxPaintEvent& event );
     
+        /**
+         * Odswieża panel z miniaturkami
+         * jedyne co robi to rysuje miniaturki od nowa
+         **/
+        void WxPanelMiniaturek_Repaint( wxPaintEvent& event );
+    
+        /**
+         * Wczytaj : powinno wczytac do wybranej miniaturki zdjecie
+         *  po wczytaniu, sprawdzic czy jest wybrana na tło, oraz z jakim powiększeniem - czyli zaktualizowac tło
+         *  ustawic scrollBars
+         *  na końcu wykonac rysowanie od poczatku
+         **/
         void m_wczytaj_1_click( wxCommandEvent& event );
         void m_wybierz_1_click( wxCommandEvent& event );
         void m_wczytaj_2_click( wxCommandEvent& event );
@@ -117,9 +129,14 @@ class MyFrame : public wxFrame
         void m_wczytaj_5_click( wxCommandEvent& event );
         void m_wybierz_5_click( wxCommandEvent& event );
     
+    
+        void Repaint();
+        void Repaint_miniatures();
+        void Repaint_minature( wxImage* miniaturka, wxClientDC *dc, wxSize main_panel_size, int which_min);
         void wczytaj( int which_button );
         void wybierz( int which_button );
-        void aktualizuj_tlo();
+        void zaladuj_miniaturke();
+        void zaktualizuj_powiekszenie();
         void dopasuj_szerokosc();
         void dopasuj_wysokosc();
         void zmiesc_na_ekranie();
@@ -127,8 +144,8 @@ class MyFrame : public wxFrame
     
     
         // Skalowanie do wielkosci miniaturki z zachowaniem proporcji
-        wxSize skalowanie_do_miniaturki(int width, int height);
-        wxPoint wysrodkowanie_miniaturki(int width, int height);
+        wxSize skalowanie_do_rozmiaru_z_zachowaniem_proporcji(wxSize rozmiar, wxSize do_skalowania);
+        wxPoint wysrodkowanie(wxSize size, int width, int height);
 	public:
 
 		MyFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1120, 629 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
