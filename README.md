@@ -1,5 +1,10 @@
 # ProjectGFK
 
-Klasa MyFrame to okno zawierające główne zdjęcie oraz menu z miniaturkami na jednym oknie
+Klasa MyFrame to klasa pochodna po wxFrame
 
-Klasa MainFrame oraz MenuFrame przedstawiają odpowiednio okno zawierające główne zdjęcie oraz okno z miniaturkami oraz menu
+Rzeczy do zrobienia:
+  1. Czyszczenie pamięci (destruktor)
+  2. Całe wycinanie itp zdjęć
+  3. Dokumentacja
+  4. Testy?
+
