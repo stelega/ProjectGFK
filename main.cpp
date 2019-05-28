@@ -7,7 +7,6 @@
 //
 
 #include "MyFrame.h"
-// #include"MyFrameFunctionality.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 
@@ -24,7 +23,7 @@ wxIMPLEMENT_APP(App);
 
 
 bool App::OnInit(){
-    MyFrame *frame = new MyFrame(NULL, wxID_ANY, "Okno główne");
+    MyFrame *frame = new MyFrame(NULL);
     frame->Show(true);
     return true;
 }

@@ -1,14 +1,4 @@
-///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Oct 26 2018)
-// http://www.wxformbuilder.org/
-//
-// PLEASE DO *NOT* EDIT THIS FILE!
-///////////////////////////////////////////////////////////////////////////
-
 #pragma once
-
-#include <iostream>
-#include <vector>
 
 #include <wx/wx.h>
 #include <wx/artprov.h>
@@ -33,125 +23,93 @@
 #include <wx/stattext.h>
 #include <wx/statbox.h>
 
-///////////////////////////////////////////////////////////////////////////
 
+#include "noname.h"
+#include <vector>
 
-///////////////////////////////////////////////////////////////////////////////
-/// Class MyFrame
-///////////////////////////////////////////////////////////////////////////////
-class MyFrame : public wxFrame
-{
-	private:
-        // Kolor tła
-        wxColour m_background_color;
-        // Wielkosc miniaturek
-        static constexpr int miniaturka_size_x{150};
-        static constexpr int miniaturka_size_y{120};
+class MyFrame : public GeneratedFrame {
+public:
+    MyFrame(wxWindow * parent);
+    ~MyFrame();
+    
+    /* wczytywanie do odpowiednich miniaturek obrazkow */
+    virtual void loadImage1(wxCommandEvent& event);
+    virtual void loadImage2(wxCommandEvent& event);
+    virtual void loadImage3(wxCommandEvent& event);
+    virtual void loadImage4(wxCommandEvent& event);
+    virtual void loadImage5(wxCommandEvent& event);
+    
+    /* wczytywanie odpowiednich obrazkow na tlo */
+    virtual void backgroundDraw1(wxCommandEvent& event);
+    virtual void backgroundDraw2(wxCommandEvent& event);
+    virtual void backgroundDraw3(wxCommandEvent& event);
+    virtual void backgroundDraw4(wxCommandEvent& event);
+    virtual void backgroundDraw5(wxCommandEvent& event);
+    
+    virtual void start_cut_button_clic(wxCommandEvent& event);
+    virtual void end_cut_button_clic(wxCommandEvent& event);
+    
+    /* Zaznaczanie obrazu */
+    virtual void Mouse_Left_Down(wxMouseEvent& event);
+    virtual void Mouse_Move(wxMouseEvent& event);
+    virtual void choiceButtonClic(wxCommandEvent& event);
+    /* dostosowywanie rozmiaru */
+    virtual void adjustEvent(wxCommandEvent& event);
+    
+    void Repaint();
+    void Repaint_miniatures();
+    void Repaint_minature(wxImage* miniaturka, wxClientDC *dc, wxSize main_panel_size, int which_min);
+    void wybierz_tlo();
+    void wczytaj(int which_button);
+    void wybierz(int which_button);
+    void zaladuj_miniaturke();
+    void zaktualizuj_powiekszenie();
+    void dopasuj_szerokosc();
+    void dopasuj_wysokosc();
+    void zmiesc_na_ekranie();
+    void na_maksa();
+    void uzupelnij_bitmape();
+    
+    void rysuj_kwadrat(wxDC& dc);
+    void rysuj_krzywa_zamknieta();
+    void rysuj_krzywa_zamknieta_gladka();
     
     
-        // Panel ze zdjeciem glownym
-        wxScrolledWindow* main_panel;
+    void WxPanelMiniaturek_Repaint(wxPaintEvent& event);
+    void WxPanel_Repaint(wxPaintEvent& event);
     
-        // Miniaturki
-        wxImage *m_no_photo_selected;
-        wxImage *m_main;
-        wxImage *m_main_copy;
-        std::vector<wxImage *> m_miniaturka;
-    
-        // Menu boczne
-        wxPanel * m_miniaturki;
-		wxButton* m_wczytaj_1;
-		wxButton* m_wybierz_1;
-		wxButton* m_wczytaj_2;
-		wxButton* m_wybierz_2;
-		wxButton* m_wczytaj_3;
-		wxButton* m_wybierz_3;
-		wxButton* m_wczytaj_4;
-		wxButton* m_wybierz_4;
-		wxButton* m_wczytaj_5;
-		wxButton* m_wybierz_5;
-        // Zmienna ktora mowi ktora miniaturka jest wybrana aktualnie, jeszcze nie wiem czy sie przyda w ogole xd
-        int m_which_min;
-        std::vector<wxRadioButton *> m_Radio;
-        wxRadioButton *m_Radio_1;
-        wxRadioButton *m_Radio_2;
-        wxRadioButton *m_Radio_3;
-        wxRadioButton *m_Radio_4;
-        wxRadioButton *m_Radio_5;
-        // Wybór powiększenia
-        std::vector<wxRadioButton *> m_Radio_powiekszenie;
+    // Skalowanie do wielkosci miniaturki z zachowaniem proporcji
+    wxSize skalowanie_do_rozmiaru_z_zachowaniem_proporcji(wxSize rozmiar, wxSize do_skalowania);
+    wxPoint wysrodkowanie(wxSize size, int width, int height);
     
     
-        // OBSŁUGA ZDARZEN
-        /** Wybranie konkretnej miniaturki na tło
-         *  powinno załadować miniaturkę do głównego wxImgage - m_main
-         *  sprawdzic jakie powiekszenie jest wybrane - tj. zaktualizowac tlo
-         *  ustawic scrollBars
-         *  na końcu wykonac rysowanie od poczatku
-         **/
-        void Radio_Button_clic(wxCommandEvent& event);
-    
-        /** Metody te powinny skopiowac oryginalne zdjecie do kopii
-         *  kopie przeskalowac zgodnie z wybranym powiekszeniem
-         *  ustawic scrollBars
-         *  na końcu wykonac rysowanie od poczatku
-         **/
-        void m_Radio_powiekszenie_1_clic(wxCommandEvent& event);
-        void m_Radio_powiekszenie_2_clic(wxCommandEvent& event);
-        void m_Radio_powiekszenie_3_clic(wxCommandEvent& event);
-        void m_Radio_powiekszenie_4_clic(wxCommandEvent& event);
-    
-        /**
-         * Wykonuje rysowanie panelu z m_main_copy
-         * wczesniej wysrodkowuje bitmape
-         **/
-        void WxPanel_Repaint( wxPaintEvent& event );
-    
-        /**
-         * Odswieża panel z miniaturkami
-         * jedyne co robi to rysuje miniaturki od nowa
-         **/
-        void WxPanelMiniaturek_Repaint( wxPaintEvent& event );
-    
-        /**
-         * Wczytaj : powinno wczytac do wybranej miniaturki zdjecie
-         *  po wczytaniu, sprawdzic czy jest wybrana na tło, oraz z jakim powiększeniem - czyli zaktualizowac tło
-         *  ustawic scrollBars
-         *  na końcu wykonac rysowanie od poczatku
-         **/
-        void m_wczytaj_1_click( wxCommandEvent& event );
-        void m_wybierz_1_click( wxCommandEvent& event );
-        void m_wczytaj_2_click( wxCommandEvent& event );
-        void m_wybierz_2_click( wxCommandEvent& event );
-        void m_wczytaj_3_click( wxCommandEvent& event );
-        void m_wybierz_3_click( wxCommandEvent& event );
-        void m_wczytaj_4_click( wxCommandEvent& event );
-        void m_wybierz_4_click( wxCommandEvent& event );
-        void m_wczytaj_5_click( wxCommandEvent& event );
-        void m_wybierz_5_click( wxCommandEvent& event );
+private:
+    static int helpfull;
+    double scale_x, scale_y;
+    // Wektory, w każdym znajdują się punkty z których tworzony jest kwadrat
+    // pierwsze 4 punkty to pierwszy kwadrar, drugie 4 punkty to drugi kwadrat itp.
+    std::vector<wxPoint *> m_kwadrat_1;
+    std::vector<wxPoint *> m_kwadrat_2;
+    std::vector<wxPoint *> m_kwadrat_3;
+    std::vector<wxPoint *> m_kwadrat_4;
+    std::vector<wxPoint *> m_kwadrat_5;
+    std::vector<std::vector<wxPoint *>> m_kwadraty;
     
     
-        void Repaint();
-        void Repaint_miniatures();
-        void Repaint_minature( wxImage* miniaturka, wxClientDC *dc, wxSize main_panel_size, int which_min);
-        void wczytaj( int which_button );
-        void wybierz( int which_button );
-        void zaladuj_miniaturke();
-        void zaktualizuj_powiekszenie();
-        void dopasuj_szerokosc();
-        void dopasuj_wysokosc();
-        void zmiesc_na_ekranie();
-        void na_maksa();
+    // Kolor tła
+    wxColour m_background_color;
+    // Miniaturki
+    wxImage *m_no_photo_selected;
+    wxImage *m_main;
+    wxImage *m_background_image;
+    wxImage *m_image_to_print;
+    std::vector<wxImage *> m_miniaturka;
+    
+    std::vector<wxRadioButton *> m_Radio;
+    std::vector<wxRadioButton *> m_Radio_powiekszenie;
+    
+    static constexpr int miniaturka_size_x{ 150 };
+    static constexpr int miniaturka_size_y{ 120 };
     
     
-        // Skalowanie do wielkosci miniaturki z zachowaniem proporcji
-        wxSize skalowanie_do_rozmiaru_z_zachowaniem_proporcji(wxSize rozmiar, wxSize do_skalowania);
-        wxPoint wysrodkowanie(wxSize size, int width, int height);
-	public:
-
-		MyFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1120, 629 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
-
-		~MyFrame();
-
 };
-
