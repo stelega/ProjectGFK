@@ -1,7 +1,5 @@
 # ProjectGFK
 
-Klasa MyFrame to klasa pochodna po wxFrame
-
 Rzeczy do zrobienia:
   1. Czyszczenie pamięci (destruktor)
   2. Całe wycinanie itp zdjęć
