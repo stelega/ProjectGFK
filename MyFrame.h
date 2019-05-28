@@ -72,6 +72,7 @@ class MyFrame : public wxFrame
 		wxButton* m_wybierz_5;
         // Zmienna ktora mowi ktora miniaturka jest wybrana aktualnie, jeszcze nie wiem czy sie przyda w ogole xd
         int m_which_min;
+        std::vector<wxRadioButton *> m_Radio;
         wxRadioButton *m_Radio_1;
         wxRadioButton *m_Radio_2;
         wxRadioButton *m_Radio_3;

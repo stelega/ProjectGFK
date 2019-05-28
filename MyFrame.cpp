@@ -57,21 +57,27 @@ MyFrame::MyFrame( wxWindow* parent, wxWindowID id, const wxString& title, const 
     wxBoxSizer* right_sizer_with_minatures;
     right_sizer_with_minatures = new wxBoxSizer( wxVERTICAL );
     
-    wxStaticBoxSizer* right_sizer_with_big_menu;
-    right_sizer_with_big_menu = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Dostosuj powiększenie")), wxVERTICAL );
+    wxBoxSizer* right_sizer_with_big_menu;
+    right_sizer_with_big_menu = new wxBoxSizer( wxVERTICAL );
     right_sizer_with_big_menu->SetMinSize(100, 629);
     
+    wxStaticBoxSizer *powiekszenia = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Dostosuj powiększenie")), wxVERTICAL );
+    
     m_Radio_powiekszenie.push_back(new wxRadioButton(this, wxID_ANY, _("100%"), wxDefaultPosition, wxDefaultSize, 0 ));
-    right_sizer_with_big_menu->Add( m_Radio_powiekszenie[0], 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 4);
+    powiekszenia->Add( m_Radio_powiekszenie[0], 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 4);
     
     m_Radio_powiekszenie.push_back(new wxRadioButton(this, wxID_ANY, _("Dopasuj szerokość"), wxDefaultPosition, wxDefaultSize, 0 ));
-    right_sizer_with_big_menu->Add( m_Radio_powiekszenie[1], 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 4);
+    powiekszenia->Add( m_Radio_powiekszenie[1], 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 4);
     
     m_Radio_powiekszenie.push_back(new wxRadioButton(this, wxID_ANY, _("Dopasuj wysokość"), wxDefaultPosition, wxDefaultSize, 0 ));
-    right_sizer_with_big_menu->Add( m_Radio_powiekszenie[2], 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 4);
+    powiekszenia->Add( m_Radio_powiekszenie[2], 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 4);
     
     m_Radio_powiekszenie.push_back(new wxRadioButton(this, wxID_ANY, _("Zmieść na ekranie"), wxDefaultPosition, wxDefaultSize, 0 ));
-    right_sizer_with_big_menu->Add( m_Radio_powiekszenie[3], 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 4);
+    powiekszenia->Add( m_Radio_powiekszenie[3], 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 4);
+    
+    wxStaticBoxSizer *wycinanie = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Dostosuj powiększenie")), wxVERTICAL );
+    
+    right_sizer_with_big_menu->Add( powiekszenia, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 4);
     
     m_Radio_powiekszenie[3]->SetValue(true);
     
@@ -93,9 +99,9 @@ MyFrame::MyFrame( wxWindow* parent, wxWindowID id, const wxString& title, const 
 	m_wybierz_1 = new wxButton( this, wxID_ANY, wxT("m_wybierz"), wxDefaultPosition, wxDefaultSize, 0 );
 	buttons_1->Add( m_wybierz_1, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 2 );
 
-    m_Radio_1 = new wxRadioButton(this, wxID_ANY, _("Jako tło"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
-    m_Radio_1->SetValue(true);
-    buttons_1->Add( m_Radio_1, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 2 );
+    m_Radio.push_back(new wxRadioButton(this, wxID_ANY, _("Jako tło"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP ));
+    m_Radio[0]->SetValue(true);
+    buttons_1->Add( m_Radio[0], 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 2 );
 
 	sizer_1->Add( buttons_1, 0, wxALL);
 
@@ -115,8 +121,8 @@ MyFrame::MyFrame( wxWindow* parent, wxWindowID id, const wxString& title, const 
 	m_wybierz_2 = new wxButton( this, wxID_ANY, wxT("m_wybierz"), wxDefaultPosition, wxDefaultSize, 0 );
 	buttons_2->Add( m_wybierz_2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 2 );
     
-    m_Radio_2 = new wxRadioButton(this, wxID_ANY, _("Jako tło"), wxDefaultPosition, wxDefaultSize, 0 );
-    buttons_2->Add( m_Radio_2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 2 );
+    m_Radio.push_back(new wxRadioButton(this, wxID_ANY, _("Jako tło"), wxDefaultPosition, wxDefaultSize, 0 ));
+    buttons_2->Add( m_Radio[1], 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 2 );
 
 
 	sizer_2->Add( buttons_2, 0, wxALL);
@@ -137,8 +143,8 @@ MyFrame::MyFrame( wxWindow* parent, wxWindowID id, const wxString& title, const 
 	m_wybierz_3 = new wxButton( this, wxID_ANY, wxT("m_wybierz"), wxDefaultPosition, wxDefaultSize, 0 );
 	buttons_3->Add( m_wybierz_3, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 2 );
     
-    m_Radio_3 = new wxRadioButton(this, wxID_ANY, _("Jako tło"), wxDefaultPosition, wxDefaultSize, 0 );
-    buttons_3->Add( m_Radio_3, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 2 );
+    m_Radio.push_back(new wxRadioButton(this, wxID_ANY, _("Jako tło"), wxDefaultPosition, wxDefaultSize, 0 ));
+    buttons_3->Add( m_Radio[2], 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 2 );
 
 
 	sizer_3->Add( buttons_3, 0, wxALL);
@@ -159,8 +165,8 @@ MyFrame::MyFrame( wxWindow* parent, wxWindowID id, const wxString& title, const 
 	m_wybierz_4 = new wxButton( this, wxID_ANY, wxT("m_wybierz"), wxDefaultPosition, wxDefaultSize, 0 );
 	buttons_4->Add( m_wybierz_4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 2 );
     
-    m_Radio_4 = new wxRadioButton(this, wxID_ANY, _("Jako tło"), wxDefaultPosition, wxDefaultSize, 0 );
-    buttons_4->Add( m_Radio_4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 2 );
+    m_Radio.push_back(new wxRadioButton(this, wxID_ANY, _("Jako tło"), wxDefaultPosition, wxDefaultSize, 0 ));
+    buttons_4->Add( m_Radio[3], 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 2 );
 
 
 	sizer_4->Add( buttons_4, 0, wxALL);
@@ -181,8 +187,8 @@ MyFrame::MyFrame( wxWindow* parent, wxWindowID id, const wxString& title, const 
 	m_wybierz_5 = new wxButton( this, wxID_ANY, wxT("m_wybierz"), wxDefaultPosition, wxDefaultSize, 0 );
 	buttons_5->Add( m_wybierz_5, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 2 );
     
-    m_Radio_5 = new wxRadioButton(this, wxID_ANY, _("Jako tło"), wxDefaultPosition, wxDefaultSize, 0 );
-    buttons_5->Add( m_Radio_5, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 2 );
+    m_Radio.push_back(new wxRadioButton(this, wxID_ANY, _("Jako tło"), wxDefaultPosition, wxDefaultSize, 0 ));
+    buttons_5->Add( m_Radio[4], 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 2 );
 
 
 	sizer_5->Add( buttons_5, 0, wxEXPAND);
@@ -202,12 +208,9 @@ MyFrame::MyFrame( wxWindow* parent, wxWindowID id, const wxString& title, const 
     
     main_panel->SetBackgroundColour(m_background_color);
     
-    // obsługa zdarzeń    
-    m_Radio_1->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
-    m_Radio_2->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
-    m_Radio_3->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
-    m_Radio_4->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
-    m_Radio_5->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
+    // obsługa zdarzeń
+    for(auto Radio : m_Radio)
+        Radio->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
     
     m_Radio_powiekszenie[0]->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_1_clic ), NULL, this );
     m_Radio_powiekszenie[1]->Connect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_2_clic ), NULL, this );
@@ -232,11 +235,8 @@ MyFrame::MyFrame( wxWindow* parent, wxWindowID id, const wxString& title, const 
 
 MyFrame::~MyFrame()
 {
-    m_Radio_1->Disconnect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
-    m_Radio_2->Disconnect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
-    m_Radio_3->Disconnect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
-    m_Radio_4->Disconnect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
-    m_Radio_5->Disconnect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
+    for(auto Radio : m_Radio)
+        Radio->Disconnect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::Radio_Button_clic ), NULL, this );
     
     m_Radio_powiekszenie[0]->Disconnect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_1_clic ), NULL, this );
     m_Radio_powiekszenie[1]->Disconnect( wxEVT_RADIOBUTTON, wxCommandEventHandler( MyFrame::m_Radio_powiekszenie_2_clic ), NULL, this );
@@ -365,16 +365,9 @@ wxPoint MyFrame::wysrodkowanie(wxSize size, int width, int height)
 
 void MyFrame::zaladuj_miniaturke()
 {
-    if(m_Radio_1->GetValue() && m_miniaturka[0]->IsOk())
-        *m_main = m_miniaturka[0]->Copy();
-    if(m_Radio_2->GetValue() && m_miniaturka[1]->IsOk())
-        *m_main = m_miniaturka[1]->Copy();
-    if(m_Radio_3->GetValue() && m_miniaturka[2]->IsOk())
-        *m_main = m_miniaturka[2]->Copy();
-    if(m_Radio_4->GetValue() && m_miniaturka[3]->IsOk())
-        *m_main = m_miniaturka[3]->Copy();
-    if(m_Radio_5->GetValue() && m_miniaturka[4]->IsOk())
-        *m_main = m_miniaturka[4]->Copy();
+    for(int i = 0 ; i < 5 ; i++)
+        if(m_Radio[i]->GetValue() && m_miniaturka[i]->IsOk())
+            *m_main = m_miniaturka[i]->Copy();
 }
 
 void MyFrame::zaktualizuj_powiekszenie()
@@ -408,7 +401,7 @@ void MyFrame::wczytaj( int which_button )
             *(m_miniaturka[which_button - 1]) = new_image.Copy();
         }
     }
-    if(m_Radio_powiekszenie[which_button - 1]->GetValue())
+    if(m_Radio[which_button - 1]->GetValue())
     {
         zaladuj_miniaturke();
         zaktualizuj_powiekszenie();
