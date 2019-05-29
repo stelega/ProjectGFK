@@ -75,12 +75,16 @@ MyFrame::MyFrame(wxWindow * parent) : GeneratedFrame(parent, wxID_ANY, "Okno gâ‰
     m_actualSize = std::vector<wxSize> (5, wxSize(0,0));
     m_startCenter = std::vector<wxPoint> (5, wxPoint(0,0));
     m_actualCenter = std::vector<wxPoint> (5, wxPoint(0,0));
-    for(auto seg : m_startSize)
-        seg = scaleWithProportion(imageWindow->GetSize(), m_noSelectedPhoto->GetSize());
-    for(auto seg : m_startCenter)
-        seg = centering(imageWindow->GetSize(), m_noSelectedPhoto->GetSize().x, m_noSelectedPhoto->GetSize().y);
+    if(m_noSelectedPhoto->IsOk())
+    {
+        for(auto seg : m_startSize)
+            seg = scaleWithProportion(imageWindow->GetSize(), m_noSelectedPhoto->GetSize());
+        for(auto seg : m_startCenter)
+            seg = centering(imageWindow->GetSize(), m_noSelectedPhoto->GetSize().x, m_noSelectedPhoto->GetSize().y);
+    }
     m_actualSize = m_startSize;
     m_actualCenter = m_startCenter;
+    
     updateMain();
 }
 
@@ -267,9 +271,9 @@ void MyFrame::uzupelnij_bitmape()
                 {
                     if( x1 < x && x < x2 && y1 < y && y < y2  )
                     {
-                        new_data[3 * (imageSize.x * y + x) + 0] = pixels[3 * (imageSize.x * y + x) + 0];
-                        new_data[3 * (imageSize.x * y + x) + 1] = pixels[3 * (imageSize.x * y + x) + 1];
-                        new_data[3 * (imageSize.x * y + x) + 2] = pixels[3 * (imageSize.x * y + x) + 2];
+                        new_data[3 * (imageSize.x * y + x) + 0] = pixels[3 * (imageSize.x * y + x - m_actualCenter[i].x) + 0];
+                        new_data[3 * (imageSize.x * y + x) + 1] = pixels[3 * (imageSize.x * y + x - m_actualCenter[i].x) + 1];
+                        new_data[3 * (imageSize.x * y + x) + 2] = pixels[3 * (imageSize.x * y + x - m_actualCenter[i].x) + 2];
                     }
                 }
             }
@@ -358,15 +362,15 @@ void MyFrame::loadMinature()
 
 void MyFrame::updateMain()
 {
-    if(m_choice1->IsEnabled())
+    if(m_choice1->IsEnabled() && m_miniaturka[m_choice1->GetSelection()]->IsOk())
         *m_ImageToPrint = m_miniaturka[m_choice1->GetSelection()]->Copy();
     else
     {
-        *m_ImageToPrint = m_BackgroundImage->Copy();
+        if(m_BackgroundImage->IsOk())
+            *m_ImageToPrint = m_BackgroundImage->Copy();
     }
     
     updateSizeOfPhoto(*m_ImageToPrint);
-    
     updateActualSizeAndCenter();
     
     
