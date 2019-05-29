@@ -46,70 +46,90 @@ public:
     virtual void backgroundDraw4(wxCommandEvent& event);
     virtual void backgroundDraw5(wxCommandEvent& event);
     
-    virtual void start_cut_button_clic(wxCommandEvent& event);
-    virtual void end_cut_button_clic(wxCommandEvent& event);
+    virtual void startCutButtonClic(wxCommandEvent& event);
+    virtual void endCutButtonClic(wxCommandEvent& event);
     
     /* Zaznaczanie obrazu */
-    virtual void Mouse_Left_Down(wxMouseEvent& event);
-    virtual void Mouse_Move(wxMouseEvent& event);
+    virtual void mouseLeftDown(wxMouseEvent& event);
+    virtual void mouseMove(wxMouseEvent& event);
     virtual void choiceButtonClic(wxCommandEvent& event);
     /* dostosowywanie rozmiaru */
     virtual void adjustEvent(wxCommandEvent& event);
     
-    void Repaint();
-    void Repaint_miniatures();
-    void Repaint_minature(wxImage* miniaturka, wxClientDC *dc, wxSize main_panel_size, int which_min);
-    void wybierz_tlo();
-    void wczytaj(int which_button);
-    void wybierz(int which_button);
-    void zaladuj_miniaturke();
-    void zaktualizuj_powiekszenie();
-    void dopasuj_szerokosc();
-    void dopasuj_wysokosc();
-    void zmiesc_na_ekranie();
-    void na_maksa();
+    void repaint();
+    void repaintMiniatures();
+    void repaintMinature(wxImage* miniaturka, wxClientDC *dc, wxSize main_panel_size, int which_min);
+    void chooseBackground();
+    void load(int which_button);
+    void choose(int which_button);
+    void loadMinature();
+    void updateSizeOfPhoto(wxImage &image);
+    void updateMain();
+    void updateActualSizeAndCenter();
+    void fitWidth(wxImage &image);
+    void fitHeight(wxImage &image);
+    void fitOnScreen(wxImage &image);
+    void fullSize(wxImage &image);
     void uzupelnij_bitmape();
-    
-    void rysuj_kwadrat(wxDC& dc);
-    void rysuj_krzywa_zamknieta();
-    void rysuj_krzywa_zamknieta_gladka();
+    void transformRectangleVector();
     
     
-    void WxPanelMiniaturek_Repaint(wxPaintEvent& event);
-    void WxPanel_Repaint(wxPaintEvent& event);
+    void drawRectangle(wxDC& dc);
+    //void drawBrokenCurve();
+    //void rysuj_krzywa_zamknieta_gladka();
+    
+    
+    void WxPanelMiniaturekRepaint(wxPaintEvent& event);
+    void WxPanelRepaint(wxPaintEvent& event);
     
     // Skalowanie do wielkosci miniaturki z zachowaniem proporcji
-    wxSize skalowanie_do_rozmiaru_z_zachowaniem_proporcji(wxSize rozmiar, wxSize do_skalowania);
-    wxPoint wysrodkowanie(wxSize size, int width, int height);
+    wxSize scaleWithProportion(wxSize rozmiar, wxSize do_skalowania);
+    wxPoint centering(wxSize size, int width, int height);
     
     
 private:
-    static int helpfull;
-    double scale_x, scale_y;
+    int which_min;
+    int m_helpfull;
+    double m_scaleX, m_scaleY;
+    // punkt w ktorym trzeba umiescic zdjecie na wxPanel aby było wysrodkowane
+    std::vector<wxPoint> m_actualCenter;
+    std::vector<wxPoint> m_startCenter;
+    
+    std::vector<wxSize> m_startSize;
+    std::vector<wxSize> m_actualSize;
+    //
+    wxPoint mMinatureCenter;
     // Wektory, w każdym znajdują się punkty z których tworzony jest kwadrat
     // pierwsze 4 punkty to pierwszy kwadrar, drugie 4 punkty to drugi kwadrat itp.
-    std::vector<wxPoint *> m_kwadrat_1;
-    std::vector<wxPoint *> m_kwadrat_2;
-    std::vector<wxPoint *> m_kwadrat_3;
-    std::vector<wxPoint *> m_kwadrat_4;
-    std::vector<wxPoint *> m_kwadrat_5;
+    std::vector<wxPoint *> m_kwadrat1;
+    std::vector<wxPoint *> m_kwadrat2;
+    std::vector<wxPoint *> m_kwadrat3;
+    std::vector<wxPoint *> m_kwadrat4;
+    std::vector<wxPoint *> m_kwadrat5;
     std::vector<std::vector<wxPoint *>> m_kwadraty;
+    
+    std::vector<wxPoint> m_kwadrat1Copy;
+    std::vector<wxPoint> m_kwadrat2Copy;
+    std::vector<wxPoint> m_kwadrat3Copy;
+    std::vector<wxPoint> m_kwadrat4Copy;
+    std::vector<wxPoint> m_kwadrat5Copy;
+    std::vector<std::vector<wxPoint>> m_kwadratyCopy;
     
     
     // Kolor tła
-    wxColour m_background_color;
+    wxColour m_backgroundColor;
     // Miniaturki
-    wxImage *m_no_photo_selected;
+    wxImage *m_noSelectedPhoto;
     wxImage *m_main;
-    wxImage *m_background_image;
-    wxImage *m_image_to_print;
+    wxImage *m_BackgroundImage;
+    wxImage *m_ImageToPrint;
     std::vector<wxImage *> m_miniaturka;
     
     std::vector<wxRadioButton *> m_Radio;
-    std::vector<wxRadioButton *> m_Radio_powiekszenie;
+    std::vector<wxRadioButton *> m_RadioPowiekszenie;
     
-    static constexpr int miniaturka_size_x{ 150 };
-    static constexpr int miniaturka_size_y{ 120 };
+    static constexpr int m_miniaturkaSizeX{ 150 };
+    static constexpr int m_miniaturkaSizeY{ 120 };
     
     
 };
