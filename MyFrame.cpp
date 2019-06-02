@@ -100,6 +100,18 @@ MyFrame::~MyFrame()
     endCutButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame::endCutButtonClic ), NULL, this );
 }
 
+
+void MyFrame::WxPanelMiniaturekRepaint(wxPaintEvent& event)
+{
+    repaintMiniatures();
+}
+
+void MyFrame::WxPanelRepaint(wxPaintEvent& event)
+{
+    repaint();
+}
+
+
 void MyFrame::choiceButtonClic(wxCommandEvent& event)
 {
     updateMain();
@@ -176,12 +188,14 @@ void MyFrame::mouseMove(wxMouseEvent& event)
         int square_count = (int)m_kwadraty[miniature_selection].size();
         if(shape_selection == 2)
         {
-            *m_kwadraty[miniature_selection][square_count - 3] = imageWindow->CalcUnscrolledPosition(wxPoint(m_kwadraty[miniature_selection][square_count - 4]->x, event.GetY()));
-            *m_kwadraty[miniature_selection][square_count - 2] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), event.GetY()));
-            *m_kwadraty[miniature_selection][square_count - 1] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), m_kwadraty[miniature_selection][square_count - 4]->y));
-            m_kwadratyCopy[miniature_selection][square_count - 3] = imageWindow->CalcUnscrolledPosition(wxPoint(m_kwadraty[miniature_selection][square_count - 4]->x, event.GetY()));
-            m_kwadratyCopy[miniature_selection][square_count - 2] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), event.GetY()));
-            m_kwadratyCopy[miniature_selection][square_count - 1] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), m_kwadraty[miniature_selection][square_count - 4]->y));
+            int shiftX = m_actualCenter[m_choice1->GetSelection()].x;
+            int shiftY = m_actualCenter[m_choice1->GetSelection()].y;
+            *m_kwadraty[miniature_selection][square_count - 3] = imageWindow->CalcUnscrolledPosition(wxPoint(m_kwadraty[miniature_selection][square_count - 4]->x, event.GetY() - shiftY));
+            *m_kwadraty[miniature_selection][square_count - 2] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - shiftX, event.GetY() - shiftY));
+            *m_kwadraty[miniature_selection][square_count - 1] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - shiftX, m_kwadraty[miniature_selection][square_count - 4]->y));
+            m_kwadratyCopy[miniature_selection][square_count - 3] = imageWindow->CalcUnscrolledPosition(wxPoint(m_kwadraty[miniature_selection][square_count - 4]->x, event.GetY() - shiftY));
+            m_kwadratyCopy[miniature_selection][square_count - 2] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - shiftX, event.GetY() - shiftY));
+            m_kwadratyCopy[miniature_selection][square_count - 1] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - shiftX, m_kwadraty[miniature_selection][square_count - 4]->y));
         }
         repaint();
     }
@@ -204,20 +218,22 @@ void MyFrame::mouseLeftDown(wxMouseEvent& event)
         {
             for(int i = 0 ; i < 4 ; i++)
             {
-                m_kwadraty[miniature_selection].push_back(new wxPoint(event.GetX(), event.GetY()));
-                m_kwadratyCopy[miniature_selection].push_back(wxPoint(event.GetX(), event.GetY()));
-                *m_kwadraty[miniature_selection][square_count + i] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), event.GetY()));
-                m_kwadratyCopy[miniature_selection][square_count + i] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), event.GetY()));
+                m_kwadraty[miniature_selection].push_back(new wxPoint(event.GetX() - m_actualCenter[m_choice1->GetSelection()].x, event.GetY() - m_actualCenter[m_choice1->GetSelection()].y ));
+                m_kwadratyCopy[miniature_selection].push_back(wxPoint(event.GetX() - m_actualCenter[m_choice1->GetSelection()].x, event.GetY()  - m_actualCenter[m_choice1->GetSelection()].y));
+                *m_kwadraty[miniature_selection][square_count + i] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - m_actualCenter[m_choice1->GetSelection()].x, event.GetY() - m_actualCenter[m_choice1->GetSelection()].y ));
+                m_kwadratyCopy[miniature_selection][square_count + i] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - m_actualCenter[m_choice1->GetSelection()].x, event.GetY() - m_actualCenter[m_choice1->GetSelection()].y ));
             }
         }
         else
         {
-            *m_kwadraty[miniature_selection][square_count - 3] = imageWindow->CalcUnscrolledPosition(wxPoint(m_kwadraty[miniature_selection][square_count - 4]->x, event.GetY()));
-            *m_kwadraty[miniature_selection][square_count - 2] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), event.GetY()));
-            *m_kwadraty[miniature_selection][square_count - 1] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), m_kwadraty[miniature_selection][square_count - 4]->y));
-            m_kwadratyCopy[miniature_selection][square_count - 3] = imageWindow->CalcUnscrolledPosition(wxPoint(m_kwadraty[miniature_selection][square_count - 4]->x, event.GetY()));
-            m_kwadratyCopy[miniature_selection][square_count - 2] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), event.GetY()));
-            m_kwadratyCopy[miniature_selection][square_count - 1] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), m_kwadraty[miniature_selection][square_count - 4]->y));
+            int shiftX = m_actualCenter[m_choice1->GetSelection()].x;
+            int shiftY = m_actualCenter[m_choice1->GetSelection()].y;
+            *m_kwadraty[miniature_selection][square_count - 3] = imageWindow->CalcUnscrolledPosition(wxPoint(m_kwadraty[miniature_selection][square_count - 4]->x, event.GetY() - shiftY));
+            *m_kwadraty[miniature_selection][square_count - 2] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - shiftX, event.GetY() - shiftY));
+            *m_kwadraty[miniature_selection][square_count - 1] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - shiftX, m_kwadraty[miniature_selection][square_count - 4]->y));
+            m_kwadratyCopy[miniature_selection][square_count - 3] = imageWindow->CalcUnscrolledPosition(wxPoint(m_kwadraty[miniature_selection][square_count - 4]->x, event.GetY() - shiftY));
+            m_kwadratyCopy[miniature_selection][square_count - 2] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - shiftX, event.GetY() - shiftY));
+            m_kwadratyCopy[miniature_selection][square_count - 1] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - shiftX, m_kwadraty[miniature_selection][square_count - 4]->y));
         }
     }
 
@@ -230,7 +246,7 @@ void MyFrame::transformRectangleVector()
     {
         for(int j = 0 ; j < m_kwadratyCopy[i].size() ; j++)
         {
-            m_kwadratyCopy[i][j] = wxPoint((m_kwadraty[i][j]->x - m_startCenter[m_choice1->GetSelection()].x) * m_scaleX + m_actualCenter[m_choice1->GetSelection()].x, (m_kwadraty[i][j]->y - m_startCenter[m_choice1->GetSelection()].y) * m_scaleY  + m_actualCenter[m_choice1->GetSelection()].y);
+            m_kwadratyCopy[i][j] = wxPoint((m_kwadraty[i][j]->x - m_actualCenter[m_choice1->GetSelection()].x) * m_scaleX + m_actualCenter[m_choice1->GetSelection()].x, (m_kwadraty[i][j]->y - m_actualCenter[m_choice1->GetSelection()].y) * m_scaleY  + m_actualCenter[m_choice1->GetSelection()].y);
         }
     }
 }
@@ -239,6 +255,7 @@ void MyFrame::uzupelnij_bitmape()
 {
     // dla wycietych kwadratow
     wxSize imageSize = m_ImageToPrint->GetSize();
+    
     unsigned char *backgroundPixels = m_ImageToPrint->GetData();
     unsigned char *new_data = new unsigned char[3 * imageSize.x * imageSize.y];
     
@@ -271,9 +288,9 @@ void MyFrame::uzupelnij_bitmape()
                 {
                     if( x1 < x && x < x2 && y1 < y && y < y2  )
                     {
-                        new_data[3 * (imageSize.x * y + x) + 0] = pixels[3 * (imageSize.x * y + x - m_actualCenter[i].x) + 0];
-                        new_data[3 * (imageSize.x * y + x) + 1] = pixels[3 * (imageSize.x * y + x - m_actualCenter[i].x) + 1];
-                        new_data[3 * (imageSize.x * y + x) + 2] = pixels[3 * (imageSize.x * y + x - m_actualCenter[i].x) + 2];
+                        new_data[3 * (imageSize.x * y + x) + 0] = pixels[3 * (imageSize.x * y + x) + 0];
+                        new_data[3 * (imageSize.x * y + x) + 1] = pixels[3 * (imageSize.x * y + x) + 1];
+                        new_data[3 * (imageSize.x * y + x) + 2] = pixels[3 * (imageSize.x * y + x) + 2];
                     }
                 }
             }
@@ -286,14 +303,22 @@ void MyFrame::uzupelnij_bitmape()
 void MyFrame::drawRectangle(wxDC& dc)
 {
     dc.SetBrush(wxBrush(*wxRED));
+    int shiftX = m_actualCenter[m_choice1->GetSelection()].x;
+    int shiftY = m_actualCenter[m_choice1->GetSelection()].y;
     int miniature_selection = m_choice1->GetSelection();
     int rect_count = m_kwadraty[miniature_selection].size() / 4.0;
+    wxPoint point1, point2, point3, point4;
     for(int i = 0 ; i < rect_count ; i++)
     {
-        dc.DrawLine(m_kwadratyCopy[miniature_selection][0 + (i * 4)], m_kwadratyCopy[miniature_selection][1 + (i * 4)]);
-        dc.DrawLine(m_kwadratyCopy[miniature_selection][0 + (i * 4)], m_kwadratyCopy[miniature_selection][3 + (i * 4)]);
-        dc.DrawLine(m_kwadratyCopy[miniature_selection][1 + (i * 4)], m_kwadratyCopy[miniature_selection][2 + (i * 4)]);
-        dc.DrawLine(m_kwadratyCopy[miniature_selection][2 + (i * 4)], m_kwadratyCopy[miniature_selection][3 + (i * 4)]);
+        point1 = wxPoint(m_kwadratyCopy[miniature_selection][0 + (i * 4)].x + shiftX, m_kwadratyCopy[miniature_selection][0 + (i * 4)].y + shiftY);
+        point2 = wxPoint(m_kwadratyCopy[miniature_selection][1 + (i * 4)].x + shiftX, m_kwadratyCopy[miniature_selection][1 + (i * 4)].y + shiftY);
+        point3 = wxPoint(m_kwadratyCopy[miniature_selection][2 + (i * 4)].x + shiftX, m_kwadratyCopy[miniature_selection][2 + (i * 4)].y + shiftY);
+        point4 = wxPoint(m_kwadratyCopy[miniature_selection][3 + (i * 4)].x + shiftX, m_kwadratyCopy[miniature_selection][3 + (i * 4)].y + shiftY);
+        
+        dc.DrawLine(point1, point2);
+        dc.DrawLine(point1, point4);
+        dc.DrawLine(point2, point3);
+        dc.DrawLine(point3, point4);
     }
 }
 
@@ -373,21 +398,21 @@ void MyFrame::updateMain()
     updateSizeOfPhoto(*m_ImageToPrint);
     updateActualSizeAndCenter();
     
-    
-    
-    if(m_choice1->IsEnabled() == false)
+    if(m_choice1->IsEnabled())
+    {
+        updateSizeOfPhoto(*m_ImageToPrint);
+        updateActualSizeAndCenter();
+        m_scaleX = m_actualSize[m_choice1->GetSelection()].x / static_cast<double>(m_startSize[m_choice1->GetSelection()].x);
+        m_scaleY = m_actualSize[m_choice1->GetSelection()].y / static_cast<double>(m_startSize[m_choice1->GetSelection()].y);
+    }
+    else
     {
         m_scaleX = m_actualSize[which_min].x / static_cast<double>(m_startSize[which_min].x);
         m_scaleY = m_actualSize[which_min].y / static_cast<double>(m_startSize[which_min].y);
         uzupelnij_bitmape();
     }
-    else
-    {
-        m_scaleX = m_actualSize[m_choice1->GetSelection()].x / static_cast<double>(m_startSize[m_choice1->GetSelection()].x);
-        m_scaleY = m_actualSize[m_choice1->GetSelection()].y / static_cast<double>(m_startSize[m_choice1->GetSelection()].y);
-        transformRectangleVector();
-    }
     
+    transformRectangleVector();
     repaint();
 }
 
@@ -422,8 +447,8 @@ void MyFrame::updateSizeOfPhoto(wxImage &image)
 
 void MyFrame::repaint()
 {
-    wxClientDC dc1(imageWindow);
-    wxBufferedDC dc(&dc1);
+    wxClientDC dc(imageWindow);
+    //wxBufferedDC dc(&dc1);
     dc.Clear();
     imageWindow->DoPrepareDC(dc);
     int x, y;
@@ -493,14 +518,4 @@ void MyFrame::repaintMinature(wxImage* miniaturka, wxClientDC *dc, wxSize imageW
     }
 }
 
-
-void MyFrame::WxPanelMiniaturekRepaint(wxPaintEvent& event)
-{
-    repaintMiniatures();
-}
-
-void MyFrame::WxPanelRepaint(wxPaintEvent& event)
-{
-    repaint();
-}
 
