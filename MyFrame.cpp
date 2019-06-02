@@ -20,7 +20,7 @@ MyFrame::MyFrame(wxWindow * parent) : GeneratedFrame(parent, wxID_ANY, "Okno gâ‰
     m_choice1->Disable();
     
     background_min1->SetValue(true);
-    adjust_box->SetSelection(3);
+    adjust_box->SetSelection(0);
     
     imageWindow->wxWindowBase::SetBackgroundColour(m_backgroundColor);
     m_miniaturki->wxWindowBase::SetBackgroundColour(m_backgroundColor);
@@ -71,20 +71,8 @@ MyFrame::MyFrame(wxWindow * parent) : GeneratedFrame(parent, wxID_ANY, "Okno gâ‰
     startCutButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame::startCutButtonClic ), NULL, this );
     endCutButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame::endCutButtonClic ), NULL, this );
     
-    m_startSize = std::vector<wxSize> (5, wxSize(0,0));
-    m_actualSize = std::vector<wxSize> (5, wxSize(0,0));
-    m_startCenter = std::vector<wxPoint> (5, wxPoint(0,0));
-    m_actualCenter = std::vector<wxPoint> (5, wxPoint(0,0));
-    if(m_noSelectedPhoto->IsOk())
-    {
-        for(auto seg : m_startSize)
-            seg = scaleWithProportion(imageWindow->GetSize(), m_noSelectedPhoto->GetSize());
-        for(auto seg : m_startCenter)
-            seg = centering(imageWindow->GetSize(), m_noSelectedPhoto->GetSize().x, m_noSelectedPhoto->GetSize().y);
-    }
-    m_actualSize = m_startSize;
-    m_actualCenter = m_startCenter;
-    
+    jakie_powiekszenie_podczas_rysowania = std::vector<std::vector<int>> (5);
+
     updateMain();
 }
 
@@ -175,6 +163,7 @@ void MyFrame::backgroundDraw5(wxCommandEvent& event) {
 
 void MyFrame::adjustEvent(wxCommandEvent& event) {
     updateMain();
+    repaint();
 }
 
 
@@ -188,14 +177,12 @@ void MyFrame::mouseMove(wxMouseEvent& event)
         int square_count = (int)m_kwadraty[miniature_selection].size();
         if(shape_selection == 2)
         {
-            int shiftX = m_actualCenter[m_choice1->GetSelection()].x;
-            int shiftY = m_actualCenter[m_choice1->GetSelection()].y;
-            *m_kwadraty[miniature_selection][square_count - 3] = imageWindow->CalcUnscrolledPosition(wxPoint(m_kwadraty[miniature_selection][square_count - 4]->x, event.GetY() - shiftY));
-            *m_kwadraty[miniature_selection][square_count - 2] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - shiftX, event.GetY() - shiftY));
-            *m_kwadraty[miniature_selection][square_count - 1] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - shiftX, m_kwadraty[miniature_selection][square_count - 4]->y));
-            m_kwadratyCopy[miniature_selection][square_count - 3] = imageWindow->CalcUnscrolledPosition(wxPoint(m_kwadraty[miniature_selection][square_count - 4]->x, event.GetY() - shiftY));
-            m_kwadratyCopy[miniature_selection][square_count - 2] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - shiftX, event.GetY() - shiftY));
-            m_kwadratyCopy[miniature_selection][square_count - 1] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - shiftX, m_kwadraty[miniature_selection][square_count - 4]->y));
+            *m_kwadraty[miniature_selection][square_count - 3] = imageWindow->CalcUnscrolledPosition(wxPoint(m_kwadraty[miniature_selection][square_count - 4]->x, event.GetY()));
+            *m_kwadraty[miniature_selection][square_count - 2] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), event.GetY()));
+            *m_kwadraty[miniature_selection][square_count - 1] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), m_kwadraty[miniature_selection][square_count - 4]->y));
+            m_kwadratyCopy[miniature_selection][square_count - 3] = imageWindow->CalcUnscrolledPosition(wxPoint(m_kwadraty[miniature_selection][square_count - 4]->x, event.GetY()));
+            m_kwadratyCopy[miniature_selection][square_count - 2] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), event.GetY()));
+            m_kwadratyCopy[miniature_selection][square_count - 1] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), m_kwadraty[miniature_selection][square_count - 4]->y));
         }
         repaint();
     }
@@ -206,6 +193,7 @@ void MyFrame::mouseLeftDown(wxMouseEvent& event)
 {
     int shape_selection = chooseShapeBox->GetSelection();
     int miniature_selection = m_choice1->GetSelection();
+    int whichAdjust = adjust_box->GetSelection();
     if(m_choice1->IsEnabled() == false) return;
     // Jezeli chcemy narysowac kwadrat
     if(shape_selection == 2)
@@ -218,22 +206,21 @@ void MyFrame::mouseLeftDown(wxMouseEvent& event)
         {
             for(int i = 0 ; i < 4 ; i++)
             {
-                m_kwadraty[miniature_selection].push_back(new wxPoint(event.GetX() - m_actualCenter[m_choice1->GetSelection()].x, event.GetY() - m_actualCenter[m_choice1->GetSelection()].y ));
-                m_kwadratyCopy[miniature_selection].push_back(wxPoint(event.GetX() - m_actualCenter[m_choice1->GetSelection()].x, event.GetY()  - m_actualCenter[m_choice1->GetSelection()].y));
-                *m_kwadraty[miniature_selection][square_count + i] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - m_actualCenter[m_choice1->GetSelection()].x, event.GetY() - m_actualCenter[m_choice1->GetSelection()].y ));
-                m_kwadratyCopy[miniature_selection][square_count + i] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - m_actualCenter[m_choice1->GetSelection()].x, event.GetY() - m_actualCenter[m_choice1->GetSelection()].y ));
+                jakie_powiekszenie_podczas_rysowania[miniature_selection].push_back(whichAdjust);
+                m_kwadraty[miniature_selection].push_back(new wxPoint(event.GetX(), event.GetY()));
+                m_kwadratyCopy[miniature_selection].push_back(wxPoint(event.GetX(), event.GetY()));
+                *m_kwadraty[miniature_selection][square_count + i] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), event.GetY()));
+                m_kwadratyCopy[miniature_selection][square_count + i] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), event.GetY()));
             }
         }
         else
         {
-            int shiftX = m_actualCenter[m_choice1->GetSelection()].x;
-            int shiftY = m_actualCenter[m_choice1->GetSelection()].y;
-            *m_kwadraty[miniature_selection][square_count - 3] = imageWindow->CalcUnscrolledPosition(wxPoint(m_kwadraty[miniature_selection][square_count - 4]->x, event.GetY() - shiftY));
-            *m_kwadraty[miniature_selection][square_count - 2] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - shiftX, event.GetY() - shiftY));
-            *m_kwadraty[miniature_selection][square_count - 1] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - shiftX, m_kwadraty[miniature_selection][square_count - 4]->y));
-            m_kwadratyCopy[miniature_selection][square_count - 3] = imageWindow->CalcUnscrolledPosition(wxPoint(m_kwadraty[miniature_selection][square_count - 4]->x, event.GetY() - shiftY));
-            m_kwadratyCopy[miniature_selection][square_count - 2] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - shiftX, event.GetY() - shiftY));
-            m_kwadratyCopy[miniature_selection][square_count - 1] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX() - shiftX, m_kwadraty[miniature_selection][square_count - 4]->y));
+            *m_kwadraty[miniature_selection][square_count - 3] = imageWindow->CalcUnscrolledPosition(wxPoint(m_kwadraty[miniature_selection][square_count - 4]->x, event.GetY()));
+            *m_kwadraty[miniature_selection][square_count - 2] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), event.GetY()));
+            *m_kwadraty[miniature_selection][square_count - 1] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), m_kwadraty[miniature_selection][square_count - 4]->y));
+            m_kwadratyCopy[miniature_selection][square_count - 3] = imageWindow->CalcUnscrolledPosition(wxPoint(m_kwadraty[miniature_selection][square_count - 4]->x, event.GetY()));
+            m_kwadratyCopy[miniature_selection][square_count - 2] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), event.GetY()));
+            m_kwadratyCopy[miniature_selection][square_count - 1] = imageWindow->CalcUnscrolledPosition(wxPoint(event.GetX(), m_kwadraty[miniature_selection][square_count - 4]->y));
         }
     }
 
@@ -242,13 +229,120 @@ void MyFrame::mouseLeftDown(wxMouseEvent& event)
 
 void MyFrame::transformRectangleVector()
 {
+    int actualAdjust = adjust_box->GetSelection();
     for(int i = 0 ; i < 5 ; i++)
     {
         for(int j = 0 ; j < m_kwadratyCopy[i].size() ; j++)
         {
-            m_kwadratyCopy[i][j] = wxPoint((m_kwadraty[i][j]->x - m_actualCenter[m_choice1->GetSelection()].x) * m_scaleX + m_actualCenter[m_choice1->GetSelection()].x, (m_kwadraty[i][j]->y - m_actualCenter[m_choice1->GetSelection()].y) * m_scaleY  + m_actualCenter[m_choice1->GetSelection()].y);
+            int p = jakie_powiekszenie_podczas_rysowania[i][j];
+            double scaleX, scaleY;
+            wxPoint begin, end;
+            
+            scale(p, actualAdjust, *m_miniaturka[i], &scaleX, &scaleY);
+            center(p, actualAdjust, *m_miniaturka[i], &begin, &end);
+            
+            std::cout << p << "  " << actualAdjust  << std::endl;
+//            std::cout << scaleX  << std::endl;
+            
+            m_kwadratyCopy[i][j] = wxPoint((m_kwadraty[i][j]->x - begin.x) / scaleX + end.x, (m_kwadraty[i][j]->y - begin.y) / scaleY  + end.y);
         }
     }
+}
+
+
+void MyFrame::scale(int fromWhichAdjus, int toWhichAdjust, wxImage whichImage, double *scaleX, double *scaleY)
+{
+    wxImage temp;
+    if(whichImage.IsOk())
+        temp = whichImage.Copy();
+    switch (fromWhichAdjus) {
+        case 0:
+            fullSize(temp);
+            break;
+        case 1:
+            fitWidth(temp);
+            break;
+        case 2:
+            fitHeight(temp);
+            break;
+        case 3:
+            fitOnScreen(temp);
+            break;
+        default:
+            break;
+    }
+    
+    wxSize begin = temp.GetSize();
+    if(whichImage.IsOk())
+        temp = whichImage.Copy();
+    
+    switch (toWhichAdjust) {
+        case 0:
+            fullSize(temp);
+            break;
+        case 1:
+            fitWidth(temp);
+            break;
+        case 2:
+            fitHeight(temp);
+            break;
+        case 3:
+            fitOnScreen(temp);
+            break;
+        default:
+            break;
+    }
+    
+    wxSize end = temp.GetSize();
+    *scaleX = begin.x / static_cast<double>(end.x);
+    *scaleY = begin.y / static_cast<double>(end.y);
+}
+
+void MyFrame::center(int fromWhichAdjus, int toWhichAdjust, wxImage whichImage, wxPoint *begin, wxPoint *end)
+{
+    wxImage temp;
+    if(whichImage.IsOk())
+        temp = whichImage.Copy();
+    switch (fromWhichAdjus) {
+        case 0:
+            fullSize(temp);
+            break;
+        case 1:
+            fitWidth(temp);
+            break;
+        case 2:
+            fitHeight(temp);
+            break;
+        case 3:
+            fitOnScreen(temp);
+            break;
+        default:
+            break;
+    }
+    
+    *begin = centering(imageWindow->GetSize(), temp.GetWidth(), temp.GetHeight());
+    
+    if(whichImage.IsOk())
+        temp = whichImage.Copy();
+    
+    switch (toWhichAdjust) {
+        case 0:
+            fullSize(temp);
+            break;
+        case 1:
+            fitWidth(temp);
+            break;
+        case 2:
+            fitHeight(temp);
+            break;
+        case 3:
+            fitOnScreen(temp);
+            break;
+        default:
+            break;
+    }
+    
+    *end = centering(imageWindow->GetSize(), temp.GetWidth(), temp.GetHeight());
 }
 
 void MyFrame::uzupelnij_bitmape()
@@ -275,18 +369,21 @@ void MyFrame::uzupelnij_bitmape()
         int countRect = static_cast<int>(m_kwadraty[i].size()) / 4;
         wxImage temp = m_miniaturka[i]->Copy();
         updateSizeOfPhoto(temp);
+//        m_actualSize[m_choice1->GetSelection()] = m_ImageToPrint->GetSize();
+//        m_actualCenter[m_choice1->GetSelection()] = centering(imageWindow->GetSize(), m_actualSize[m_choice1->GetSelection()].x, m_actualSize[m_choice1->GetSelection()].y);
         unsigned char *pixels = temp.GetData();
         for(int j = 0 ; j < countRect ; j++)
         {
-            int x1 = m_kwadraty[i][j * 4]->x < m_kwadraty[i][j * 4 + 2]->x ? m_kwadraty[i][j * 4]->x : m_kwadraty[i][j * 4 + 2]->x;
-            int x2 = m_kwadraty[i][j * 4]->x < m_kwadraty[i][j * 4 + 2]->x ? m_kwadraty[i][j * 4 + 2]->x : m_kwadraty[i][j * 4]->x;
-            int y1 = m_kwadraty[i][j * 4]->y < m_kwadraty[i][j * 4 + 2]->y ? m_kwadraty[i][j * 4]->y : m_kwadraty[i][j * 4 + 2]->y;
-            int y2 = m_kwadraty[i][j * 4]->y < m_kwadraty[i][j * 4 + 2]->y ? m_kwadraty[i][j * 4 + 2]->y : m_kwadraty[i][j * 4]->y;
+            int x1 = m_kwadratyCopy[i][j * 4].x < m_kwadratyCopy[i][j * 4 + 2].x ? m_kwadratyCopy[i][j * 4].x : m_kwadratyCopy[i][j * 4 + 2].x;
+            int x2 = m_kwadratyCopy[i][j * 4].x < m_kwadratyCopy[i][j * 4 + 2].x ? m_kwadratyCopy[i][j * 4 + 2].x : m_kwadratyCopy[i][j * 4].x;
+            int y1 = m_kwadratyCopy[i][j * 4].y < m_kwadratyCopy[i][j * 4 + 2].y ? m_kwadratyCopy[i][j * 4].y : m_kwadratyCopy[i][j * 4 + 2].y;
+            int y2 = m_kwadratyCopy[i][j * 4].y < m_kwadratyCopy[i][j * 4 + 2].y ? m_kwadratyCopy[i][j * 4 + 2].y : m_kwadratyCopy[i][j * 4].y;
+//            std::cout << "zakres x = (" << x1 << "," << x2 << ") \t Zakres y = (" << y1 << "," << y2 << ")" << std::endl;
             for(int x = 0 ; x < imageSize.x ; x++)
             {
                 for(int y = 0 ; y < imageSize.y ; y++)
                 {
-                    if( x1 < x && x < x2 && y1 < y && y < y2  )
+                    if( (x1) < x && x < (x2) && (y1) < y && y < (y2)  )
                     {
                         new_data[3 * (imageSize.x * y + x) + 0] = pixels[3 * (imageSize.x * y + x) + 0];
                         new_data[3 * (imageSize.x * y + x) + 1] = pixels[3 * (imageSize.x * y + x) + 1];
@@ -303,17 +400,15 @@ void MyFrame::uzupelnij_bitmape()
 void MyFrame::drawRectangle(wxDC& dc)
 {
     dc.SetBrush(wxBrush(*wxRED));
-    int shiftX = m_actualCenter[m_choice1->GetSelection()].x;
-    int shiftY = m_actualCenter[m_choice1->GetSelection()].y;
     int miniature_selection = m_choice1->GetSelection();
     int rect_count = m_kwadraty[miniature_selection].size() / 4.0;
     wxPoint point1, point2, point3, point4;
     for(int i = 0 ; i < rect_count ; i++)
     {
-        point1 = wxPoint(m_kwadratyCopy[miniature_selection][0 + (i * 4)].x + shiftX, m_kwadratyCopy[miniature_selection][0 + (i * 4)].y + shiftY);
-        point2 = wxPoint(m_kwadratyCopy[miniature_selection][1 + (i * 4)].x + shiftX, m_kwadratyCopy[miniature_selection][1 + (i * 4)].y + shiftY);
-        point3 = wxPoint(m_kwadratyCopy[miniature_selection][2 + (i * 4)].x + shiftX, m_kwadratyCopy[miniature_selection][2 + (i * 4)].y + shiftY);
-        point4 = wxPoint(m_kwadratyCopy[miniature_selection][3 + (i * 4)].x + shiftX, m_kwadratyCopy[miniature_selection][3 + (i * 4)].y + shiftY);
+        point1 = wxPoint(m_kwadratyCopy[miniature_selection][0 + (i * 4)].x, m_kwadratyCopy[miniature_selection][0 + (i * 4)].y);
+        point2 = wxPoint(m_kwadratyCopy[miniature_selection][1 + (i * 4)].x, m_kwadratyCopy[miniature_selection][1 + (i * 4)].y);
+        point3 = wxPoint(m_kwadratyCopy[miniature_selection][2 + (i * 4)].x, m_kwadratyCopy[miniature_selection][2 + (i * 4)].y);
+        point4 = wxPoint(m_kwadratyCopy[miniature_selection][3 + (i * 4)].x, m_kwadratyCopy[miniature_selection][3 + (i * 4)].y);
         
         dc.DrawLine(point1, point2);
         dc.DrawLine(point1, point4);
@@ -325,11 +420,6 @@ void MyFrame::drawRectangle(wxDC& dc)
 //void MyFrame::drawBrokenCurve(){}
 //void MyFrame::drawBrokenCurve_gladka(){}
 
-void MyFrame::chooseBackground(){
-    loadMinature();
-    updateMain();
-    repaint();
-}
 
 
 void MyFrame::fitWidth(wxImage &image)
@@ -378,59 +468,25 @@ wxPoint MyFrame::centering(wxSize size, int width, int height)
 }
 
 
-void MyFrame::loadMinature()
-{
-    for (int i = 0; i < 5; i++)
-        if (m_Radio[i]->GetValue() && m_miniaturka[i]->IsOk())
-            *m_BackgroundImage = m_miniaturka[i]->Copy();
-}
-
 void MyFrame::updateMain()
 {
     if(m_choice1->IsEnabled() && m_miniaturka[m_choice1->GetSelection()]->IsOk())
+    {
         *m_ImageToPrint = m_miniaturka[m_choice1->GetSelection()]->Copy();
-    else
-    {
-        if(m_BackgroundImage->IsOk())
-            *m_ImageToPrint = m_BackgroundImage->Copy();
-    }
-    
-    updateSizeOfPhoto(*m_ImageToPrint);
-    updateActualSizeAndCenter();
-    
-    if(m_choice1->IsEnabled())
-    {
         updateSizeOfPhoto(*m_ImageToPrint);
-        updateActualSizeAndCenter();
-        m_scaleX = m_actualSize[m_choice1->GetSelection()].x / static_cast<double>(m_startSize[m_choice1->GetSelection()].x);
-        m_scaleY = m_actualSize[m_choice1->GetSelection()].y / static_cast<double>(m_startSize[m_choice1->GetSelection()].y);
+        transformRectangleVector();
     }
     else
     {
-        m_scaleX = m_actualSize[which_min].x / static_cast<double>(m_startSize[which_min].x);
-        m_scaleY = m_actualSize[which_min].y / static_cast<double>(m_startSize[which_min].y);
+        *m_ImageToPrint = m_BackgroundImage->Copy();
+        updateSizeOfPhoto(*m_ImageToPrint);
+        transformRectangleVector();
         uzupelnij_bitmape();
     }
     
-    transformRectangleVector();
-    repaint();
 }
 
-void MyFrame::updateActualSizeAndCenter()
-{
-    if(m_choice1->IsEnabled())
-    {
-        if(m_ImageToPrint->IsOk())
-            m_actualSize[m_choice1->GetSelection()] = m_ImageToPrint->GetSize();
-        m_actualCenter[m_choice1->GetSelection()] = centering(imageWindow->GetSize(), m_actualSize[m_choice1->GetSelection()].x, m_actualSize[m_choice1->GetSelection()].y);
-    }
-    else
-    {
-        if(m_ImageToPrint->IsOk())
-            m_actualSize[which_min] = m_ImageToPrint->GetSize();
-        m_actualCenter[which_min] = centering(imageWindow->GetSize(), m_actualSize[which_min].x, m_actualSize[which_min].y);
-    }
-}
+
 
 void MyFrame::updateSizeOfPhoto(wxImage &image)
 {
@@ -447,20 +503,23 @@ void MyFrame::updateSizeOfPhoto(wxImage &image)
 
 void MyFrame::repaint()
 {
-    wxClientDC dc(imageWindow);
-    //wxBufferedDC dc(&dc1);
+    wxClientDC dc1(imageWindow);
+    wxBufferedDC dc(&dc1);
     dc.Clear();
     imageWindow->DoPrepareDC(dc);
+    
+    wxPoint center = centering(imageWindow->GetSize(), m_ImageToPrint->GetWidth(), m_ImageToPrint->GetHeight());
+    
     int x, y;
     imageWindow->GetSize(&x, &y);
     if (m_ImageToPrint->IsOk())
     {
         if(m_choice1->IsEnabled())
-            dc.DrawBitmap(wxBitmap(*m_ImageToPrint), m_actualCenter[m_choice1->GetSelection()]);
+            dc.DrawBitmap(wxBitmap(*m_ImageToPrint), center);
         else
-            dc.DrawBitmap(wxBitmap(*m_ImageToPrint), m_actualCenter[which_min]);
+            dc.DrawBitmap(wxBitmap(*m_ImageToPrint), center);
     }
-    
+    //drawRectangle(dc);
     int selection = chooseShapeBox->GetSelection();
     if(selection == 2 && m_choice1->IsEnabled())
     {
@@ -476,18 +535,35 @@ void MyFrame::load(int which_button)
         new_image.LoadFile(WxOpenFileDialog.GetPath(), wxBITMAP_TYPE_JPEG);
         if (new_image.IsOk()) {
             *(m_miniaturka[which_button - 1]) = new_image.Copy();
-            m_startSize[which_button - 1] = scaleWithProportion(imageWindow->GetSize(), new_image.GetSize());
-            m_startCenter[which_button - 1] = centering(imageWindow->GetSize(), m_startSize[which_button - 1].x, m_startSize[which_button - 1].y);
         }
     }
+    
     if (m_Radio[which_button - 1]->GetValue() || m_choice1->IsEnabled())
     {
-        loadMinature();
-        updateMain();
+        chooseBackground();
+        //updateMain();
     }
+    
     repaintMiniatures();
     repaint();
 }
+
+void MyFrame::loadMinature()
+{
+    for (int i = 0; i < 5; i++)
+        if (m_Radio[i]->GetValue() && m_miniaturka[i]->IsOk())
+            *m_BackgroundImage = m_miniaturka[i]->Copy();
+}
+
+void MyFrame::chooseBackground(){
+    *m_BackgroundImage = m_miniaturka[which_min]->Copy();
+    *m_ImageToPrint = m_BackgroundImage->Copy();
+    updateSizeOfPhoto(*m_ImageToPrint);
+    uzupelnij_bitmape();
+    repaint();
+}
+
+
 
 void MyFrame::repaintMiniatures()
 {

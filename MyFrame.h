@@ -65,13 +65,15 @@ public:
     void loadMinature();
     void updateSizeOfPhoto(wxImage &image);
     void updateMain();
-    void updateActualSizeAndCenter();
     void fitWidth(wxImage &image);
     void fitHeight(wxImage &image);
     void fitOnScreen(wxImage &image);
     void fullSize(wxImage &image);
     void uzupelnij_bitmape();
     void transformRectangleVector();
+    void update_scrollbars();
+    void scale(int fromWhichAdjus, int toWhichAdjust, wxImage whichImage, double *scaleX, double *scaleY);
+    void center(int fromWhichAdjus, int toWhichAdjust, wxImage whichImage, wxPoint *begin, wxPoint *end);
     
     
     void drawRectangle(wxDC& dc);
@@ -92,15 +94,11 @@ private:
     int m_helpfull;
     double m_scaleX, m_scaleY;
     // punkt w ktorym trzeba umiescic zdjecie na wxPanel aby było wysrodkowane
-    std::vector<wxPoint> m_actualCenter;
-    std::vector<wxPoint> m_startCenter;
-    
-    std::vector<wxSize> m_startSize;
-    std::vector<wxSize> m_actualSize;
     //
     wxPoint mMinatureCenter;
     // Wektory, w każdym znajdują się punkty z których tworzony jest kwadrat
     // pierwsze 4 punkty to pierwszy kwadrar, drugie 4 punkty to drugi kwadrat itp.
+    std::vector<std::vector<int>> jakie_powiekszenie_podczas_rysowania;
     std::vector<wxPoint *> m_kwadrat1;
     std::vector<wxPoint *> m_kwadrat2;
     std::vector<wxPoint *> m_kwadrat3;
