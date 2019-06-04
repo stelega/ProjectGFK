@@ -26,6 +26,8 @@
 
 #include "noname.h"
 #include <vector>
+#include <cmath>
+#include <stdio.h>
 
 class MyFrame : public GeneratedFrame {
 public:
@@ -50,6 +52,7 @@ public:
     virtual void endCutButtonClic(wxCommandEvent& event);
     
     /* Zaznaczanie obrazu */
+    virtual void mouseLeftUp(wxMouseEvent& event);
     virtual void mouseLeftDown(wxMouseEvent& event);
     virtual void mouseMove(wxMouseEvent& event);
     virtual void choiceButtonClic(wxCommandEvent& event);
@@ -63,17 +66,17 @@ public:
     void load(int which_button);
     void choose(int which_button);
     void loadMinature();
-    void updateSizeOfPhoto(wxImage &image);
+    void updateSizeOfPhoto(wxImage &image, int whichAdjust);
     void updateMain();
     void fitWidth(wxImage &image);
     void fitHeight(wxImage &image);
     void fitOnScreen(wxImage &image);
-    void fullSize(wxImage &image);
-    void uzupelnij_bitmape();
     void transformRectangleVector();
+    void transformFragments();
     void update_scrollbars();
     void scale(int fromWhichAdjus, int toWhichAdjust, wxImage whichImage, double *scaleX, double *scaleY);
     void center(int fromWhichAdjus, int toWhichAdjust, wxImage whichImage, wxPoint *begin, wxPoint *end);
+    void cutRectangleFragment(int whichMinature, int whichAdjust);
     
     
     void drawRectangle(wxDC& dc);
@@ -91,7 +94,6 @@ public:
     
 private:
     int which_min;
-    int m_helpfull;
     double m_scaleX, m_scaleY;
     // punkt w ktorym trzeba umiescic zdjecie na wxPanel aby było wysrodkowane
     //
@@ -99,19 +101,14 @@ private:
     // Wektory, w każdym znajdują się punkty z których tworzony jest kwadrat
     // pierwsze 4 punkty to pierwszy kwadrar, drugie 4 punkty to drugi kwadrat itp.
     std::vector<std::vector<int>> jakie_powiekszenie_podczas_rysowania;
-    std::vector<wxPoint *> m_kwadrat1;
-    std::vector<wxPoint *> m_kwadrat2;
-    std::vector<wxPoint *> m_kwadrat3;
-    std::vector<wxPoint *> m_kwadrat4;
-    std::vector<wxPoint *> m_kwadrat5;
     std::vector<std::vector<wxPoint *>> m_kwadraty;
     
-    std::vector<wxPoint> m_kwadrat1Copy;
-    std::vector<wxPoint> m_kwadrat2Copy;
-    std::vector<wxPoint> m_kwadrat3Copy;
-    std::vector<wxPoint> m_kwadrat4Copy;
-    std::vector<wxPoint> m_kwadrat5Copy;
     std::vector<std::vector<wxPoint>> m_kwadratyCopy;
+    
+    std::vector<std::vector<wxImage *>> m_fragments;
+    std::vector<std::vector<wxImage>> m_fragmentsCopy;
+    std::vector<std::vector<wxPoint>> m_fragmentsPosition;
+    std::vector<std::vector<int>> m_fragmentsScale;
     
     
     // Kolor tła
