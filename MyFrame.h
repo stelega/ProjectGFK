@@ -22,6 +22,7 @@
 #include <wx/radiobut.h>
 #include <wx/stattext.h>
 #include <wx/statbox.h>
+#include <wx/msgdlg.h>
 
 
 #include "noname.h"

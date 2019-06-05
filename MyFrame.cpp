@@ -28,7 +28,7 @@ MyFrame::MyFrame(wxWindow * parent) : GeneratedFrame(parent, wxID_ANY, "Okno gâ‰
     // Zaâ‰¥adowanie obrazka z napisem No photo selected oraz ustawienie wszystkich miniaturek
     wxInitAllImageHandlers();
     wxLogNull logNo;
-    m_noSelectedPhoto->LoadFile("/Users/michalwojtasik/Desktop/default.png");
+    m_noSelectedPhoto->LoadFile("default.png");
     if (m_noSelectedPhoto->IsOk())
     {
         for (auto miniaturka : m_miniaturka) {
@@ -79,6 +79,16 @@ MyFrame::~MyFrame()
     
     startCutButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame::startCutButtonClic ), NULL, this );
     endCutButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame::endCutButtonClic ), NULL, this );
+
+	for (int i = 0; i < 5; i++) {
+		delete m_miniaturka[i];
+	}
+
+	delete m_main;
+	delete m_ImageToPrint;
+	delete m_noSelectedPhoto;
+	delete m_BackgroundImage;
+
 }
 
 
@@ -515,18 +525,25 @@ void MyFrame::load(int which_button)
     wxFileDialog WxOpenFileDialog(this, _("Choose a file"), _(""), _(""), _("JPG files (*.jpg)|*.jpg"), wxFD_OPEN);
     if (WxOpenFileDialog.ShowModal() == wxID_OK) {
         new_image.LoadFile(WxOpenFileDialog.GetPath(), wxBITMAP_TYPE_JPEG);
-        if (new_image.IsOk()) {
+
+        if (new_image.IsOk() && new_image.GetWidth() >= 4500 && new_image.GetHeight() >= 3500) {
             *(m_miniaturka[which_button - 1]) = new_image.Copy();
+
+			if (m_Radio[which_button - 1]->GetValue() || m_choice1->IsEnabled())
+			{
+				chooseBackground();
+			}
+
+			repaintMiniatures();
+			repaint();
         }
+
+		else {
+			wxMessageBox(wxT("Wczytany obraz musi byc rozmiaru co najmniej 4500 x 3500 pikseli!"), wxT("Bledny rozmiar obrazka"));
+			load(which_button);
+		}
     }
-    
-    if (m_Radio[which_button - 1]->GetValue() || m_choice1->IsEnabled())
-    {
-        chooseBackground();
-    }
-    
-    repaintMiniatures();
-    repaint();
+	
 }
 
 void MyFrame::loadMinature()
