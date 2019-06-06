@@ -1,6 +1,6 @@
 #include "MyFrame.h"
 
-MyFrame::MyFrame(wxWindow * parent) : GeneratedFrame(parent, wxID_ANY, "Okno g≥Ûwne") {
+MyFrame::MyFrame(wxWindow * parent) : GeneratedFrame(parent, wxID_ANY, "Okno glowne") {
     // Tworzenie miejsca na oryginaly wszystkich zdjec
     which_min = 0;
     m_scaleX = 1;
