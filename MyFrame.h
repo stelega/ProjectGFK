@@ -55,6 +55,7 @@ public:
     /* Zaznaczanie obrazu */
     virtual void mouseLeftUp(wxMouseEvent& event);
     virtual void mouseLeftDown(wxMouseEvent& event);
+    virtual void mouseRightDown(wxMouseEvent& event);
     virtual void mouseMove(wxMouseEvent& event);
     virtual void choiceButtonClic(wxCommandEvent& event);
     /* dostosowywanie rozmiaru */
@@ -81,8 +82,8 @@ public:
     
     
     void drawRectangle(wxDC& dc);
-    //void drawBrokenCurve();
-    //void rysuj_krzywa_zamknieta_gladka();
+    void drawBrokenCurve(wxDC& dc);
+    void drawBrokenCurve_gladka(wxDC& dc);
     
     
     void WxPanelMiniaturekRepaint(wxPaintEvent& event);
@@ -101,10 +102,19 @@ private:
     wxPoint mMinatureCenter;
     // Wektory, w każdym znajdują się punkty z których tworzony jest kwadrat
     // pierwsze 4 punkty to pierwszy kwadrar, drugie 4 punkty to drugi kwadrat itp.
-    std::vector<std::vector<int>> jakie_powiekszenie_podczas_rysowania;
-    std::vector<std::vector<wxPoint *>> m_kwadraty;
-    
+    std::vector<std::vector<int>> jakie_powiekszenie_podczas_rysowania_kwadratow;
+    std::vector<std::vector<wxPoint*>> m_kwadraty;
     std::vector<std::vector<wxPoint>> m_kwadratyCopy;
+    
+    
+    std::vector<std::vector<int>> jakie_powiekszenie_podczas_rysowania_krzywej;
+    std::vector<std::vector<std::vector<wxPoint*>>> m_krzywe;
+    std::vector<std::vector<std::vector<wxPoint>>> m_krzyweCopy;
+    // ilosc krzywych w miniaturkach
+    int m_licznikKrzywych[5] = {};
+    bool drawingCurve = false;
+    std::vector<std::vector<int>> m_licznikPunktow = {};
+    
     
     std::vector<std::vector<wxImage *>> m_fragments;
     std::vector<std::vector<wxImage>> m_fragmentsCopy;
